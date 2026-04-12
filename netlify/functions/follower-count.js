@@ -1,5 +1,4 @@
 exports.handler = async function(event, context) {
-  // NETLIFY_API_TOKEN は Netlify の環境変数に設定
   var token = process.env.NETLIFY_API_TOKEN;
   var siteId = process.env.SITE_ID;
 
@@ -7,18 +6,32 @@ exports.handler = async function(event, context) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ count: 0 })
+      body: JSON.stringify({ count: 0, debug: 'missing_env', hasToken: !!token, hasSiteId: !!siteId })
     };
   }
 
   try {
-    // Netlify API でフォーム一覧を取得
     var formsRes = await fetch('https://api.netlify.com/api/v1/sites/' + siteId + '/forms', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    var forms = await formsRes.json();
+    var formsText = await formsRes.text();
+    var forms;
+    try { forms = JSON.parse(formsText); } catch(e) { 
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ count: 0, debug: 'parse_error', status: formsRes.status, response: formsText.substring(0, 200) })
+      };
+    }
 
-    // "follow" フォームを探す
+    if (!Array.isArray(forms)) {
+      return {
+        statusCode: 200,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+        body: JSON.stringify({ count: 0, debug: 'not_array', response: JSON.stringify(forms).substring(0, 200) })
+      };
+    }
+
     var followForm = null;
     for (var i = 0; i < forms.length; i++) {
       if (forms[i].name === 'follow') {
@@ -36,13 +49,13 @@ exports.handler = async function(event, context) {
         'Access-Control-Allow-Origin': '*',
         'Cache-Control': 'public, max-age=60'
       },
-      body: JSON.stringify({ count: count })
+      body: JSON.stringify({ count: count, formFound: !!followForm, totalForms: forms.length })
     };
   } catch (err) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ count: 0 })
+      body: JSON.stringify({ count: 0, debug: 'error', message: err.message })
     };
   }
 };

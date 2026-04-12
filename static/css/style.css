@@ -1217,21 +1217,26 @@ a:hover {
 .calendar-weekdays {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  width: 100%;
   text-align: center;
   font-size: 0.7rem;
   font-weight: bold;
   color: var(--color-text-muted);
   margin-bottom: 2px;
 }
+.calendar-weekdays span {
+  display: block;
+  text-align: center;
+}
 .calendar-weekdays span:first-child { color: #e74c3c; }
 .calendar-weekdays span:last-child { color: #3498db; }
 .calendar-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
+  width: 100%;
   gap: 2px;
 }
 .calendar-day {
-  aspect-ratio: 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1241,7 +1246,11 @@ a:hover {
   position: relative;
   cursor: default;
   overflow: hidden;
+  padding: 6px 0;
+  min-height: 30px;
 }
+.calendar-day.sunday { color: #e74c3c; }
+.calendar-day.saturday { color: #3498db; }
 .calendar-day.today {
   background: var(--color-accent-light);
   font-weight: bold;

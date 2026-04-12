@@ -7,24 +7,27 @@ function renderCalendar() {
   var container = document.getElementById('calendarDays');
   if (!title || !container) return;
 
-  title.textContent = '📅 ' + calYear + '年' + (calMonth + 1) + '月';
+  title.textContent = '\uD83D\uDCC5 ' + calYear + '年' + (calMonth + 1) + '月';
 
   var firstDay = new Date(calYear, calMonth, 1).getDay();
   var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
   var today = new Date();
   var html = '';
-  var i, day, pi;
+  var i, day, pi, dayOfWeek;
 
   for (i = 0; i < firstDay; i++) {
-    html += '<div class="calendar-day other-month"></div>';
+    html += '<div class="calendar-day other-month">&nbsp;</div>';
   }
 
   for (day = 1; day <= daysInMonth; day++) {
     var ds = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
     var posts = (typeof CALENDAR_MAP !== 'undefined') ? CALENDAR_MAP[ds] : null;
     var isToday = (today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === day);
+    dayOfWeek = (firstDay + day - 1) % 7;
     var cls = 'calendar-day';
 
+    if (dayOfWeek === 0) { cls += ' sunday'; }
+    if (dayOfWeek === 6) { cls += ' saturday'; }
     if (isToday) { cls += ' today'; }
 
     if (posts && posts.length > 0) {

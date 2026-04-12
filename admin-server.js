@@ -93,6 +93,20 @@ function writCategoriesToToml(categories) {
   });
   content += block;
   fs.writeFileSync(HUGO_TOML_PATH, content, 'utf-8');
+
+  // カテゴリーの _index.md を自動生成（存在しない場合のみ）
+  const categoriesDir = path.join(BLOG_DIR, 'content', 'categories');
+  categories.forEach(cat => {
+    // URLからスラッグを抽出: "/categories/xxx/" → "xxx"
+    const slug = cat.url.replace(/^\/categories\//, '').replace(/\/$/, '');
+    if (!slug) return;
+    const catDir = path.join(categoriesDir, slug);
+    const indexPath = path.join(catDir, '_index.md');
+    if (!fs.existsSync(indexPath)) {
+      if (!fs.existsSync(catDir)) fs.mkdirSync(catDir, { recursive: true });
+      fs.writeFileSync(indexPath, `---\ntitle: "${cat.name}"\n---\n`, 'utf-8');
+    }
+  });
 }
 
 // === ヘルパー ===

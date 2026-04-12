@@ -460,6 +460,54 @@
     }
     .login-box button:hover { background: #d4705a; }
     .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 10px; display: none; }
+
+    /* カテゴリー管理 */
+    .cat-item {
+      background: white;
+      border: 2px solid #ede7e0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: grab;
+      transition: all 0.2s;
+    }
+    .cat-item:active { cursor: grabbing; }
+    .cat-item.dragging { opacity: 0.4; border-color: #e8917a; }
+    .cat-item .drag-handle {
+      font-size: 1.2rem;
+      color: #ccc;
+      cursor: grab;
+      user-select: none;
+    }
+    .cat-item input {
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      padding: 6px 10px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+    .cat-item input:focus { border-color: #e8917a; }
+    .cat-item .cat-icon-input { width: 50px; text-align: center; font-size: 1.2rem; }
+    .cat-item .cat-name-input { flex: 1; min-width: 100px; }
+    .cat-item .cat-url-input { flex: 1.5; min-width: 120px; font-size: 0.8rem; color: #888; }
+    .cat-item .cat-delete {
+      background: none;
+      border: none;
+      font-size: 1.2rem;
+      cursor: pointer;
+      color: #ccc;
+      padding: 4px 8px;
+    }
+    .cat-item .cat-delete:hover { color: #e74c3c; }
+    .cat-item .cat-num {
+      font-size: 0.8rem;
+      color: #bbb;
+      min-width: 20px;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -482,6 +530,7 @@
   <div class="header-actions">
     <span id="serverStatus"><span class="status-dot ok"></span> 接続中</span>
     <button onclick="showList()">📋 記事一覧</button>
+    <button onclick="showCategories()">📂 カテゴリー</button>
     <button onclick="showAnalytics()">📊 アクセス解析</button>
     <button onclick="showHelp()">❓ 使い方ガイド</button>
     <a href="http://localhost:1313/" target="_blank">👀 サイトプレビュー</a>
@@ -642,6 +691,19 @@
     <div class="analytics-section">
       <h3>💬 最近のコメント</h3>
       <div id="recentComments"><p style="color:#999">読み込み中...</p></div>
+    </div>
+  </div>
+
+  <!-- ===== カテゴリー管理画面 ===== -->
+  <div class="view" id="viewCategories">
+    <h2 style="margin-bottom:20px;">📂 ホームのカテゴリー管理</h2>
+    <p style="color:#888;font-size:0.85rem;margin-bottom:16px;">ドラッグで並び替え、追加・削除ができます。保存後「🚀 公開」で反映されます。</p>
+
+    <div id="categoryList" style="margin-bottom:20px;"></div>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn btn-primary" onclick="addCategory()" style="font-size:0.9rem;">＋ カテゴリーを追加</button>
+      <button class="btn btn-primary" onclick="saveCategories()" style="font-size:0.9rem;background:#4caf50;">💾 保存する</button>
     </div>
   </div>
 
@@ -1087,6 +1149,131 @@ function showLoading(text) {
 
 function hideLoading() {
   document.getElementById('loadingOverlay').classList.remove('show');
+}
+
+// === カテゴリー管理 ===
+async function showCategories() {
+  showView('viewCategories');
+  try {
+    const res = await fetch(API_BASE + '/api/categories');
+    const data = await res.json();
+    if (data.success) {
+      renderCategoryList(data.categories);
+    } else {
+      document.getElementById('categoryList').innerHTML = '<p style="color:red;">読み込みに失敗しました</p>';
+    }
+  } catch(e) {
+    document.getElementById('categoryList').innerHTML = '<p style="color:red;">サーバーに接続できません</p>';
+  }
+}
+
+function renderCategoryList(categories) {
+  const container = document.getElementById('categoryList');
+  container.innerHTML = '';
+  categories.forEach(function(cat, i) {
+    var item = document.createElement('div');
+    item.className = 'cat-item';
+    item.draggable = true;
+    item.dataset.index = i;
+    item.innerHTML =
+      '<span class="cat-num">' + (i + 1) + '</span>' +
+      '<span class="drag-handle" title="ドラッグで並び替え">☰</span>' +
+      '<input class="cat-icon-input" type="text" value="' + escapeAttr(cat.icon) + '" placeholder="絵文字" />' +
+      '<input class="cat-name-input" type="text" value="' + escapeAttr(cat.name) + '" placeholder="カテゴリー名" />' +
+      '<input class="cat-url-input" type="text" value="' + escapeAttr(cat.url) + '" placeholder="/categories/xxx/" />' +
+      '<button class="cat-delete" onclick="deleteCategory(this)" title="削除">✕</button>';
+    // drag events
+    item.addEventListener('dragstart', function(e) {
+      e.dataTransfer.setData('text/plain', i);
+      this.style.opacity = '0.4';
+    });
+    item.addEventListener('dragend', function() {
+      this.style.opacity = '1';
+    });
+    item.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      this.style.borderTop = '3px solid #e8a0bf';
+    });
+    item.addEventListener('dragleave', function() {
+      this.style.borderTop = '';
+    });
+    item.addEventListener('drop', function(e) {
+      e.preventDefault();
+      this.style.borderTop = '';
+      var fromIndex = parseInt(e.dataTransfer.getData('text/plain'));
+      var toIndex = parseInt(this.dataset.index);
+      if (fromIndex === toIndex) return;
+      var items = collectCategories();
+      var moved = items.splice(fromIndex, 1)[0];
+      items.splice(toIndex, 0, moved);
+      renderCategoryList(items);
+    });
+    container.appendChild(item);
+  });
+}
+
+function escapeAttr(s) {
+  return (s || '').replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function collectCategories() {
+  var items = [];
+  document.querySelectorAll('#categoryList .cat-item').forEach(function(el) {
+    items.push({
+      icon: el.querySelector('.cat-icon-input').value.trim(),
+      name: el.querySelector('.cat-name-input').value.trim(),
+      url: el.querySelector('.cat-url-input').value.trim()
+    });
+  });
+  return items;
+}
+
+function addCategory() {
+  var cats = collectCategories();
+  cats.push({ icon: '📁', name: '', url: '/categories//' });
+  renderCategoryList(cats);
+}
+
+function deleteCategory(btn) {
+  var item = btn.closest('.cat-item');
+  item.remove();
+  // re-number
+  document.querySelectorAll('#categoryList .cat-item').forEach(function(el, i) {
+    el.querySelector('.cat-num').textContent = i + 1;
+    el.dataset.index = i;
+  });
+}
+
+async function saveCategories() {
+  var cats = collectCategories();
+  if (cats.length === 0) {
+    alert('カテゴリーが0件です。最低1つ追加してください。');
+    return;
+  }
+  for (var i = 0; i < cats.length; i++) {
+    if (!cats[i].name || !cats[i].url) {
+      alert((i + 1) + '番目のカテゴリーの名前またはURLが空です。');
+      return;
+    }
+  }
+  try {
+    showLoading();
+    var res = await fetch(API_BASE + '/api/categories', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ categories: cats })
+    });
+    var data = await res.json();
+    hideLoading();
+    if (data.success) {
+      alert('✅ カテゴリーを保存しました！\n公開（🚀）で本番に反映されます。');
+    } else {
+      alert('❌ 保存に失敗しました: ' + (data.error || '不明なエラー'));
+    }
+  } catch(e) {
+    hideLoading();
+    alert('❌ サーバーに接続できません');
+  }
 }
 
 // === アクセス解析 ===

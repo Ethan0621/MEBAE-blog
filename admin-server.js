@@ -31,6 +31,39 @@ function writeJSON(filename, data) {
   fs.writeFileSync(path.join(SOCIAL_DIR, filename), JSON.stringify(data, null, 2), 'utf-8');
 }
 
+// === hugo.toml カテゴリー管理 ===
+const HUGO_TOML_PATH = path.join(BLOG_DIR, 'hugo.toml');
+
+function readCategoriesFromToml() {
+  const content = fs.readFileSync(HUGO_TOML_PATH, 'utf-8');
+  const categories = [];
+  const regex = /\[\[params\.homeCategories\]\]\s*\n\s*icon\s*=\s*"([^"]*)"\s*\n\s*name\s*=\s*"([^"]*)"\s*\n\s*url\s*=\s*"([^"]*)"/g;
+  let m;
+  while ((m = regex.exec(content)) !== null) {
+    categories.push({ icon: m[1], name: m[2], url: m[3] });
+  }
+  return categories;
+}
+
+function writCategoriesToToml(categories) {
+  let content = fs.readFileSync(HUGO_TOML_PATH, 'utf-8');
+  // 既存のカテゴリーブロックを全て削除
+  content = content.replace(/# ─+\n# ホームのカテゴリーボックス[\s\S]*?(?=\n\[(?!params\.homeCategories)|$)/, '');
+  content = content.replace(/\[\[params\.homeCategories\]\]\s*\n\s*icon\s*=\s*"[^"]*"\s*\n\s*name\s*=\s*"[^"]*"\s*\n\s*url\s*=\s*"[^"]*"\s*\n?/g, '');
+  // 末尾の余分な空行を整理
+  content = content.replace(/\n{3,}/g, '\n\n');
+  if (!content.endsWith('\n')) content += '\n';
+  // 新しいカテゴリーブロックを追加
+  let block = '\n# ─────────────────────────────────────────\n';
+  block += '# ホームのカテゴリーボックス（順番通りに表示）\n';
+  block += '# ─────────────────────────────────────────\n';
+  categories.forEach(cat => {
+    block += `\n[[params.homeCategories]]\n  icon = "${cat.icon}"\n  name = "${cat.name}"\n  url = "${cat.url}"\n`;
+  });
+  content += block;
+  fs.writeFileSync(HUGO_TOML_PATH, content, 'utf-8');
+}
+
 // === ヘルパー ===
 function parseFrontMatter(content) {
   const match = content.match(/^---\n([\s\S]*?)\n---\n([\s\S]*)$/);
@@ -329,6 +362,25 @@ async function handleRequest(req, res) {
       const postCount = fs.readdirSync(CONTENT_DIR).filter(f => f.endsWith('.md')).length;
       const fd = readJSON('followers.json') || { count: 0 };
       sendJSON(res, 200, { blogDir: BLOG_DIR, postCount, hasChanges: gitStatus.length > 0, gitStatus, siteUrl: 'https://mebae-california.com', followerCount: fd.count }); return;
+    }
+
+    // ========== カテゴリー管理 ==========
+    if (pathname === '/api/categories' && req.method === 'GET') {
+      const categories = readCategoriesFromToml();
+      sendJSON(res, 200, { success: true, categories });
+      return;
+    }
+
+    if (pathname === '/api/categories' && req.method === 'POST') {
+      const raw = await readBody(req);
+      const data = JSON.parse(raw.toString('utf-8'));
+      if (!data.categories || !Array.isArray(data.categories)) {
+        sendJSON(res, 400, { success: false, error: 'categories配列が必要です' });
+        return;
+      }
+      writCategoriesToToml(data.categories);
+      sendJSON(res, 200, { success: true, message: 'カテゴリーを保存しました' });
+      return;
     }
 
     sendJSON(res, 404, { error: 'Not Found' });

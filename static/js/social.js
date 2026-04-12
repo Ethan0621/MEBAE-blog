@@ -133,17 +133,37 @@
   const followFormArea = document.getElementById('followFormArea');
   const followerCountEl = document.getElementById('followerCount');
 
-  // フォロワー数を取得
-  if (followerCountEl) {
+  // フォロワー数を取得（ローカルでもNetlify Functionを試す）
+  function loadFollowerCount() {
+    var el = document.getElementById('followerCount');
+    if (!el) return;
+
+    // まずNetlify Functionから取得
     fetch('/.netlify/functions/follower-count')
-      .then(function(r) { return r.json(); })
+      .then(function(r) {
+        if (!r.ok) throw new Error('HTTP ' + r.status);
+        return r.json();
+      })
       .then(function(data) {
-        followerCountEl.textContent = data.count || 0;
+        el.textContent = (data.count !== undefined) ? data.count : 0;
       })
       .catch(function() {
-        followerCountEl.textContent = '0';
+        // Netlify Functionが使えない場合（ローカル等）はAPI_BASEを試す
+        if (API_BASE) {
+          fetch(API_BASE + '/api/followers')
+            .then(function(r) { return r.json(); })
+            .then(function(data) {
+              el.textContent = data.count || 0;
+            })
+            .catch(function() {
+              el.textContent = '0';
+            });
+        } else {
+          el.textContent = '0';
+        }
       });
   }
+  loadFollowerCount();
 
   // 既にフォロー済みならUIを更新
   function updateFollowUI() {

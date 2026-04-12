@@ -5,7 +5,14 @@ var calMonth = new Date().getMonth();
 function renderCalendar() {
   var title = document.getElementById('calendarTitle');
   var container = document.getElementById('calendarDays');
+  var weekdays = document.querySelector('.calendar-weekdays');
   if (!title || !container) return;
+
+  // インラインスタイルで確実にグリッド表示（拡張機能によるCSS上書き対策）
+  container.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);width:100%;gap:2px;';
+  if (weekdays) {
+    weekdays.style.cssText = 'display:grid;grid-template-columns:repeat(7,1fr);width:100%;text-align:center;font-size:0.7rem;font-weight:bold;margin-bottom:2px;';
+  }
 
   title.textContent = '\uD83D\uDCC5 ' + calYear + '年' + (calMonth + 1) + '月';
 

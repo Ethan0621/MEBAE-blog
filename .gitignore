@@ -1,6 +1,10 @@
 # Blog config (contains secrets)
 .blog-config.json
 
+# Hugo build output (Netlifyが自動ビルド)
+public/
+resources/
+
 # macOS
 .DS_Store
 

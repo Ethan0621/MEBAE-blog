@@ -31,6 +31,37 @@ function writeJSON(filename, data) {
   fs.writeFileSync(path.join(SOCIAL_DIR, filename), JSON.stringify(data, null, 2), 'utf-8');
 }
 
+// === 背景CSS生成 ===
+const BACKGROUNDS = {
+  'default':    { bg: '#fefcfa', card: '#ffffff', border: '#ede7e0' },
+  'sakura':     { bg: '#fff5f5', card: '#ffffff', border: '#f5d5d5' },
+  'mint':       { bg: '#f0faf6', card: '#ffffff', border: '#c8e6d8' },
+  'lavender':   { bg: '#f5f0ff', card: '#ffffff', border: '#ddd0f0' },
+  'sky':        { bg: '#f0f6ff', card: '#ffffff', border: '#c8d8f0' },
+  'cream':      { bg: '#fffbf0', card: '#ffffff', border: '#f0e0c0' },
+  'peach':      { bg: '#fff3eb', card: '#ffffff', border: '#f0d0b8' },
+  'ocean':      { bg: '#eef6f9', card: '#ffffff', border: '#c0dce6' },
+  'forest':     { bg: '#f2f7f0', card: '#ffffff', border: '#c8dcc0' },
+  'sunset':     { bg: '#fff0ea', card: '#ffffff', border: '#f0c8b0' },
+  'night':      { bg: '#1a1a2e', card: '#16213e', border: '#0f3460', text: '#e0e0e0', textLight: '#b0b0b0', textMuted: '#808080', primary: '#e94560', primaryDark: '#e94560', primaryLight: '#2a1a3e' },
+};
+
+function generateBackgroundCSS(bgName) {
+  const theme = BACKGROUNDS[bgName] || BACKGROUNDS['default'];
+  let css = '/* 自動生成: 背景テーマ (' + bgName + ') */\n:root {\n';
+  css += '  --color-bg: ' + theme.bg + ';\n';
+  css += '  --color-bg-card: ' + theme.card + ';\n';
+  css += '  --color-border: ' + theme.border + ';\n';
+  if (theme.text) css += '  --color-text: ' + theme.text + ';\n';
+  if (theme.textLight) css += '  --color-text-light: ' + theme.textLight + ';\n';
+  if (theme.textMuted) css += '  --color-text-muted: ' + theme.textMuted + ';\n';
+  if (theme.primary) css += '  --color-primary: ' + theme.primary + ';\n';
+  if (theme.primaryDark) css += '  --color-primary-dark: ' + theme.primaryDark + ';\n';
+  if (theme.primaryLight) css += '  --color-primary-light: ' + theme.primaryLight + ';\n';
+  css += '}\n';
+  fs.writeFileSync(path.join(BLOG_DIR, 'static', 'css', 'background.css'), css, 'utf-8');
+}
+
 // === hugo.toml カテゴリー管理 ===
 const HUGO_TOML_PATH = path.join(BLOG_DIR, 'hugo.toml');
 
@@ -395,6 +426,29 @@ async function handleRequest(req, res) {
       }
       writCategoriesToToml(data.categories);
       sendJSON(res, 200, { success: true, message: 'カテゴリーを保存しました' });
+      return;
+    }
+
+    // ========== ブログ設定（背景など） ==========
+    if (pathname === '/api/settings' && req.method === 'GET') {
+      const settings = readJSON('settings.json') || { background: 'default' };
+      sendJSON(res, 200, { success: true, settings });
+      return;
+    }
+
+    if (pathname === '/api/settings' && req.method === 'POST') {
+      const raw = await readBody(req);
+      const data = JSON.parse(raw.toString('utf-8'));
+      if (data.background && !BACKGROUNDS[data.background]) {
+        sendJSON(res, 400, { success: false, error: '無効な背景テーマです' });
+        return;
+      }
+      const current = readJSON('settings.json') || {};
+      const updated = Object.assign(current, data);
+      writeJSON('settings.json', updated);
+      // CSSカスタムファイルを生成
+      generateBackgroundCSS(updated.background || 'default');
+      sendJSON(res, 200, { success: true, message: '設定を保存しました', settings: updated });
       return;
     }
 

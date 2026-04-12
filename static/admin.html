@@ -207,7 +207,23 @@
       justify-content: center;
       line-height: 1;
     }
-    .image-thumb:hover .delete-btn { display: flex; }
+    .image-thumb .edit-btn {
+      position: absolute;
+      top: 4px; left: 4px;
+      background: rgba(52,152,219,0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 22px; height: 22px;
+      font-size: 0.7rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+    .image-thumb:hover .delete-btn,
+    .image-thumb:hover .edit-btn { display: flex; }
     .image-thumb .copy-path {
       position: absolute;
       bottom: 0; left: 0; right: 0;
@@ -524,6 +540,65 @@
       min-width: 20px;
       text-align: center;
     }
+
+    /* 絵文字ピッカー */
+    .emoji-picker {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.2);
+      z-index: 10001;
+      width: 380px;
+      max-height: 480px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    .emoji-picker-header {
+      padding: 14px 16px 8px;
+      border-bottom: 1px solid #eee;
+    }
+    .emoji-picker-header h3 { font-size: 1rem; margin-bottom: 8px; }
+    .emoji-category-tabs {
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+    }
+    .emoji-category-tabs button {
+      padding: 4px 8px;
+      border: none;
+      background: #f5f0ec;
+      border-radius: 6px;
+      font-size: 1.1rem;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .emoji-category-tabs button.active {
+      background: #e8917a;
+    }
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 4px;
+      padding: 12px;
+      overflow-y: auto;
+      max-height: 340px;
+    }
+    .emoji-grid button {
+      font-size: 1.4rem;
+      padding: 6px;
+      border: none;
+      background: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .emoji-grid button:hover {
+      background: #fdf0ed;
+      transform: scale(1.2);
+    }
   </style>
 </head>
 <body>
@@ -547,6 +622,7 @@
     <span id="serverStatus"><span class="status-dot ok"></span> 接続中</span>
     <button onclick="showList()">📋 記事一覧</button>
     <button onclick="showCategories()">📂 カテゴリー</button>
+    <button onclick="showSettings()">🎨 背景設定</button>
     <button onclick="showAnalytics()">📊 アクセス解析</button>
     <button onclick="showHelp()">❓ 使い方ガイド</button>
     <a href="http://localhost:1313/" target="_blank">👀 サイトプレビュー</a>
@@ -632,14 +708,29 @@
     </div>
     <div class="form-group">
       <label for="content">✍️ 本文</label>
-      <div class="shortcode-bar">
-        <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真を挿入</button>
+      <div class="shortcode-bar" style="border-bottom:1px solid #ede7e0;padding-bottom:6px;margin-bottom:6px;">
+        <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真</button>
         <button class="shortcode-btn" onclick="insertShortcode('gallery')">🖼️ ギャラリー</button>
         <button class="shortcode-btn" onclick="insertShortcode('youtube')">🎥 YouTube</button>
         <button class="shortcode-btn" onclick="insertShortcode('amazon')">🛒 Amazon</button>
-        <button class="shortcode-btn" onclick="insertShortcode('h2')">📌 見出し</button>
-        <button class="shortcode-btn" onclick="insertShortcode('bold')"><b>B</b> 太字</button>
+      </div>
+      <div class="shortcode-bar" style="border-bottom:1px solid #ede7e0;padding-bottom:6px;margin-bottom:6px;">
+        <button class="shortcode-btn" onclick="insertShortcode('heading')">📌 見出し</button>
+        <button class="shortcode-btn" onclick="insertShortcode('bold')"><b>B</b></button>
+        <button class="shortcode-btn" onclick="insertShortcode('italic')"><i>I</i></button>
+        <button class="shortcode-btn" onclick="insertShortcode('fontSize')" id="fontSizeBtn">🔤 文字サイズ</button>
+        <button class="shortcode-btn" onclick="insertShortcode('color')">🎨 文字色</button>
         <button class="shortcode-btn" onclick="insertShortcode('link')">🔗 リンク</button>
+      </div>
+      <div class="shortcode-bar">
+        <button class="shortcode-btn" onclick="insertShortcode('alignLeft')" title="左寄せ">◀ 左</button>
+        <button class="shortcode-btn" onclick="insertShortcode('alignCenter')" title="中央">▣ 中央</button>
+        <button class="shortcode-btn" onclick="insertShortcode('alignRight')" title="右寄せ">▶ 右</button>
+        <button class="shortcode-btn" onclick="insertShortcode('list')">• リスト</button>
+        <button class="shortcode-btn" onclick="insertShortcode('numlist')">1. 番号リスト</button>
+        <button class="shortcode-btn" onclick="insertShortcode('blockquote')">❝ 引用</button>
+        <button class="shortcode-btn" onclick="insertShortcode('hr')">― 区切り線</button>
+        <button class="shortcode-btn" onclick="showEmojiPicker()">😀 絵文字</button>
       </div>
       <textarea id="content" placeholder="ここに記事の本文を書いてください...&#10;&#10;💡 ヒント:&#10;## で見出し&#10;**太字** で太字&#10;- でリスト&#10;&#10;上のボタンから写真やYouTubeも挿入できます！"></textarea>
     </div>
@@ -721,6 +812,16 @@
       <button class="btn btn-primary" onclick="addCategory()" style="font-size:0.9rem;">＋ カテゴリーを追加</button>
       <button class="btn btn-primary" onclick="saveCategories()" style="font-size:0.9rem;background:#4caf50;">💾 保存する</button>
     </div>
+  </div>
+
+  <!-- ===== 背景設定画面 ===== -->
+  <div class="view" id="viewSettings">
+    <h2 style="margin-bottom:20px;">🎨 ブログの背景設定</h2>
+    <p style="color:#888;font-size:0.85rem;margin-bottom:20px;">お好きな背景テーマを選んでください。選択後「🚀 公開」で本番サイトに反映されます。</p>
+
+    <div id="bgThemeGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:24px;"></div>
+
+    <div id="bgCurrentLabel" style="color:#666;font-size:0.85rem;margin-top:8px;"></div>
   </div>
 
   <!-- ===== 使い方ガイド画面 ===== -->
@@ -894,6 +995,7 @@ const ADMIN_PASS = 'mebae2026';
 let currentSlug = null;
 let tags = [];
 let uploadedImages = [];
+let savedCursorPos = null; // ダイアログ表示前のカーソル位置を保存
 
 // === ログイン ===
 function doLogin() {
@@ -1162,9 +1264,10 @@ function renderImageGrid() {
   const grid = document.getElementById('imagePreviewGrid');
   grid.innerHTML = uploadedImages.map((img, i) => `
     <div class="image-thumb">
-      <img src="${API_BASE}${img.path}" alt="${img.filename}" onclick="insertImagePath('${img.path}')" style="cursor:pointer" onerror="this.src=''; this.alt='⚠️ 読込失敗'; this.style.cssText='display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:#f5f5f5;width:100%;height:100%;cursor:pointer;'">
+      <img src="${API_BASE}${img.path}" alt="${img.filename}" onclick="editImageProps(${i})" style="cursor:pointer" onerror="this.src=''; this.alt='⚠️ 読込失敗'; this.style.cssText='display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:#f5f5f5;width:100%;height:100%;cursor:pointer;'">
+      <button class="edit-btn" onclick="event.stopPropagation();editImageProps(${i})" title="編集">✎</button>
       <button class="delete-btn" onclick="event.stopPropagation();deleteImage(${i})" title="削除">✕</button>
-      <div class="copy-path" onclick="insertImagePath('${img.path}')">クリックで挿入</div>
+      <div class="copy-path" onclick="editImageProps(${i})">クリックで挿入</div>
     </div>
   `).join('');
 }
@@ -1172,10 +1275,11 @@ function renderImageGrid() {
 function insertImagePath(imgPath) {
   const textarea = document.getElementById('content');
   const shortcode = '{{< img src="' + imgPath + '" alt="" caption="" >}}';
-  const pos = textarea.selectionStart;
+  const pos = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
   textarea.value = textarea.value.substring(0, pos) + '\n' + shortcode + '\n' + textarea.value.substring(pos);
   textarea.focus();
   textarea.selectionStart = textarea.selectionEnd = pos + shortcode.length + 2;
+  savedCursorPos = null;
   showToast('📷 写真を本文に挿入しました', 'success');
 }
 
@@ -1233,6 +1337,7 @@ function insertShortcode(type) {
   const start = textarea.selectionStart;
   const end = textarea.selectionEnd;
   const selectedText = textarea.value.substring(start, end);
+  savedCursorPos = start; // ダイアログ表示前にカーソル位置を保存
   let insert = '';
   const slug = document.getElementById('slug').value || 'folder';
   switch(type) {
@@ -1273,11 +1378,9 @@ function insertShortcode(type) {
         return true;
       });
       return;
-    case 'h2':
-      const heading = selectedText || prompt('見出しのテキストを入力してください：');
-      if (heading) { insert = '\n## ' + heading + '\n'; }
-      else return;
-      break;
+    case 'heading':
+      showHeadingPicker();
+      return;
     case 'bold':
       if (selectedText) {
         insert = '**' + selectedText + '**';
@@ -1287,6 +1390,21 @@ function insertShortcode(type) {
         else return;
       }
       break;
+    case 'italic':
+      if (selectedText) {
+        insert = '*' + selectedText + '*';
+      } else {
+        const italicText = prompt('イタリックにするテキストを入力してください：');
+        if (italicText) { insert = '*' + italicText + '*'; }
+        else return;
+      }
+      break;
+    case 'fontSize':
+      showFontSizePicker();
+      return;
+    case 'color':
+      showColorPicker();
+      return;
     case 'link':
       showInputDialog('🔗 リンクを挿入', [
         { id: 'linkText', label: 'リンクテキスト', placeholder: '例: こちらのサイト', value: selectedText || '', required: true },
@@ -1298,6 +1416,53 @@ function insertShortcode(type) {
         return true;
       });
       return;
+    case 'alignLeft':
+      if (selectedText) {
+        insert = '<div style="text-align:left">\n\n' + selectedText + '\n\n</div>';
+      } else {
+        insert = '<div style="text-align:left">\n\n';
+      }
+      break;
+    case 'alignCenter':
+      if (selectedText) {
+        insert = '<div style="text-align:center">\n\n' + selectedText + '\n\n</div>';
+      } else {
+        insert = '<div style="text-align:center">\n\n';
+      }
+      break;
+    case 'alignRight':
+      if (selectedText) {
+        insert = '<div style="text-align:right">\n\n' + selectedText + '\n\n</div>';
+      } else {
+        insert = '<div style="text-align:right">\n\n';
+      }
+      break;
+    case 'list':
+      if (selectedText) {
+        insert = selectedText.split('\n').map(line => '- ' + line).join('\n');
+      } else {
+        insert = '\n- ';
+      }
+      break;
+    case 'numlist':
+      if (selectedText) {
+        insert = selectedText.split('\n').map((line, i) => (i + 1) + '. ' + line).join('\n');
+      } else {
+        insert = '\n1. ';
+      }
+      break;
+    case 'blockquote':
+      if (selectedText) {
+        insert = selectedText.split('\n').map(line => '> ' + line).join('\n');
+      } else {
+        const quoteText = prompt('引用テキストを入力してください：');
+        if (quoteText) { insert = '\n> ' + quoteText + '\n'; }
+        else return;
+      }
+      break;
+    case 'hr':
+      insert = '\n\n---\n\n';
+      break;
   }
   textarea.value = textarea.value.substring(0, start) + insert + textarea.value.substring(end);
   textarea.focus();
@@ -1306,10 +1471,11 @@ function insertShortcode(type) {
 
 function insertAtCursor(text) {
   const textarea = document.getElementById('content');
-  const start = textarea.selectionStart;
-  textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(textarea.selectionEnd);
+  const start = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
+  textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(start);
   textarea.focus();
   textarea.selectionStart = textarea.selectionEnd = start + text.length;
+  savedCursorPos = null;
 }
 
 // === 入力ダイアログ ===
@@ -1406,7 +1572,7 @@ function showImagePicker(isGallery) {
     document.getElementById('pickerInsert').onclick = function() {
       if (selected.size === 0) { showToast('写真を選択してください', 'error'); return; }
       const textarea = document.getElementById('content');
-      const pos = textarea.selectionStart;
+      const pos = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
       let code = '\n{{< gallery >}}\n';
       selected.forEach(i => {
         const img = uploadedImages[i];
@@ -1415,10 +1581,351 @@ function showImagePicker(isGallery) {
       code += '{{< /gallery >}}\n';
       textarea.value = textarea.value.substring(0, pos) + code + textarea.value.substring(pos);
       textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = pos + code.length;
+      savedCursorPos = null;
       modal.remove();
       showToast('🖼️ ギャラリーを挿入しました（' + selected.size + '枚）', 'success');
     };
   }
+}
+
+// === 見出しレベルピッカー ===
+function showHeadingPicker() {
+  const textarea = document.getElementById('content');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+  savedCursorPos = start;
+
+  let modal = document.getElementById('headingPickerModal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'headingPickerModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;';
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:480px;width:90%;';
+  panel.innerHTML = `
+    <h3 style="margin-bottom:16px;">📌 見出しを挿入</h3>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:4px;color:#555;">見出しのテキスト</label>
+      <input type="text" id="headingText" value="${(selectedText || '').replace(/"/g, '&quot;')}" placeholder="見出しのテキストを入力"
+        style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:8px;color:#555;">見出しレベルを選択（クリックで挿入）</label>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        <button onclick="doInsertHeading(1)" style="padding:12px 16px;border:2px solid #e8917a;background:#fdf0ed;border-radius:10px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.6rem;font-weight:bold;min-width:40px;">H1</span>
+          <span style="font-size:1.4rem;font-weight:bold;">タイトル見出し</span>
+        </button>
+        <button onclick="doInsertHeading(2)" style="padding:12px 16px;border:2px solid #ddd;background:#f8f8f8;border-radius:10px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.3rem;font-weight:bold;min-width:40px;">H2</span>
+          <span style="font-size:1.2rem;font-weight:bold;">大見出し</span>
+        </button>
+        <button onclick="doInsertHeading(3)" style="padding:12px 16px;border:2px solid #ddd;background:#f8f8f8;border-radius:10px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1.1rem;font-weight:bold;min-width:40px;">H3</span>
+          <span style="font-size:1.05rem;font-weight:bold;">中見出し</span>
+        </button>
+        <button onclick="doInsertHeading(4)" style="padding:12px 16px;border:2px solid #ddd;background:#f8f8f8;border-radius:10px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:1rem;font-weight:bold;min-width:40px;">H4</span>
+          <span style="font-size:0.95rem;font-weight:bold;">小見出し</span>
+        </button>
+        <button onclick="doInsertHeading(5)" style="padding:12px 16px;border:2px solid #ddd;background:#f8f8f8;border-radius:10px;cursor:pointer;text-align:left;display:flex;align-items:center;gap:12px;">
+          <span style="font-size:0.9rem;font-weight:bold;min-width:40px;">H5</span>
+          <span style="font-size:0.85rem;font-weight:bold;">ミニ見出し</span>
+        </button>
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <button onclick="document.getElementById('headingPickerModal').remove()" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">キャンセル</button>
+    </div>
+  `;
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  setTimeout(() => document.getElementById('headingText').focus(), 100);
+}
+
+function doInsertHeading(level) {
+  const text = document.getElementById('headingText').value.trim();
+  if (!text) { showToast('見出しのテキストを入力してください', 'error'); return; }
+  const prefix = '#'.repeat(level) + ' ';
+  insertAtCursor('\n' + prefix + text + '\n');
+  document.getElementById('headingPickerModal').remove();
+}
+
+// === 絵文字ピッカー ===
+const EMOJI_DATA = {
+  '😀 よく使う': ['😀','😂','🤣','😊','😍','🥰','😎','🤩','😋','🤤','😢','😭','😱','🤔','👍','👎','👏','🙏','💪','✌️','🤞','❤️','💕','✨','🔥','💯','🎉','🎊','⭐','🌟'],
+  '🍔 食べ物': ['🍔','🍕','🍣','🍱','🍜','🍝','🍛','🍙','🍚','🥗','🥩','🍗','🥚','🧀','🥑','🥕','🍅','🌽','🥦','🍎','🍊','🍓','🍇','🍌','🍰','🧁','🍩','🍪','☕','🧋','🥤','🍺','🍷','🥂'],
+  '🛒 買い物': ['🛒','🛍️','💰','💵','💳','🏪','🏬','🏷️','📦','🧴','🧻','🧹','🧽','🪣','💡','🔌','📱','💻'],
+  '🏠 生活': ['🏠','🏡','🚗','🚕','✈️','🚃','🚲','📅','⏰','☀️','🌧️','🌈','🌊','🌴','🌸','🌺','🌻','🎄','🐶','🐱','🎵','📖','✏️','📝'],
+  '🇺🇸 国旗': ['🇺🇸','🇯🇵','🇰🇷','🇨🇳','🇫🇷','🇩🇪','🇮🇹','🇬🇧','🇧🇷','🇲🇽','🇨🇦','🇦🇺','🇹🇭','🇻🇳','🇵🇭','🇮🇳'],
+};
+
+function showEmojiPicker() {
+  const textarea = document.getElementById('content');
+  savedCursorPos = textarea.selectionStart;
+  let overlay = document.getElementById('emojiOverlay');
+  if (overlay) overlay.remove();
+  overlay = document.createElement('div');
+  overlay.id = 'emojiOverlay';
+  overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:10000;';
+  overlay.onclick = (e) => { if (e.target === overlay) overlay.remove(); };
+
+  const picker = document.createElement('div');
+  picker.className = 'emoji-picker';
+
+  const categories = Object.keys(EMOJI_DATA);
+  let currentCat = categories[0];
+
+  function renderGrid(cat) {
+    const emojis = EMOJI_DATA[cat];
+    return emojis.map(e => `<button onclick="insertEmoji('${e}')">${e}</button>`).join('');
+  }
+
+  function renderTabs() {
+    return categories.map(cat =>
+      `<button class="${cat === currentCat ? 'active' : ''}" onclick="switchEmojiCategory(this, '${cat}')">${cat.split(' ')[0]}</button>`
+    ).join('');
+  }
+
+  picker.innerHTML = `
+    <div class="emoji-picker-header">
+      <h3>😀 絵文字を選択</h3>
+      <div class="emoji-category-tabs" id="emojiTabs">${renderTabs()}</div>
+    </div>
+    <div class="emoji-grid" id="emojiGrid">${renderGrid(currentCat)}</div>
+  `;
+
+  overlay.appendChild(picker);
+  document.body.appendChild(overlay);
+
+  // グローバル関数として設定
+  window._emojiData = EMOJI_DATA;
+  window._emojiCategories = categories;
+}
+
+function switchEmojiCategory(btn, cat) {
+  const tabs = document.getElementById('emojiTabs');
+  tabs.querySelectorAll('button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const emojis = window._emojiData[cat];
+  document.getElementById('emojiGrid').innerHTML = emojis.map(e => `<button onclick="insertEmoji('${e}')">${e}</button>`).join('');
+}
+
+function insertEmoji(emoji) {
+  const textarea = document.getElementById('content');
+  const pos = textarea.selectionStart;
+  textarea.value = textarea.value.substring(0, pos) + emoji + textarea.value.substring(textarea.selectionEnd);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = pos + emoji.length;
+  const overlay = document.getElementById('emojiOverlay');
+  if (overlay) overlay.remove();
+}
+
+// === 画像編集（alt/キャプション/サイズ/位置） ===
+function editImageProps(index) {
+  const textarea = document.getElementById('content');
+  savedCursorPos = textarea.selectionStart;
+  const img = uploadedImages[index];
+  let modal = document.getElementById('imgEditModal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'imgEditModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:10000;display:flex;align-items:center;justify-content:center;';
+
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:520px;width:90%;max-height:85vh;overflow-y:auto;';
+  panel.innerHTML = `
+    <h3 style="margin-bottom:16px;">✎ 写真の設定</h3>
+    <div style="text-align:center;margin-bottom:16px;">
+      <img src="${API_BASE}${img.path}" style="max-width:200px;max-height:150px;border-radius:8px;object-fit:cover;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:4px;color:#555;">写真の説明（alt）</label>
+      <input type="text" id="imgEditAlt" placeholder="例: コストコの入り口" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:4px;color:#555;">キャプション（写真の下に表示）</label>
+      <input type="text" id="imgEditCaption" placeholder="例: 週末のコストコは混んでいました" style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="margin-bottom:12px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:8px;color:#555;">📐 サイズ</label>
+      <div style="display:flex;gap:6px;flex-wrap:wrap;">
+        <button class="img-size-btn" data-w="300" style="padding:8px 14px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;font-size:0.82rem;">小（300px）</button>
+        <button class="img-size-btn" data-w="500" style="padding:8px 14px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;font-size:0.82rem;">中（500px）</button>
+        <button class="img-size-btn active" data-w="800" style="padding:8px 14px;border:2px solid #e8917a;border-radius:8px;background:#fdf0ed;cursor:pointer;font-size:0.82rem;">大（800px）</button>
+        <button class="img-size-btn" data-w="1200" style="padding:8px 14px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;font-size:0.82rem;">特大（1200px）</button>
+        <button class="img-size-btn" data-w="100%" style="padding:8px 14px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;font-size:0.82rem;">全幅</button>
+      </div>
+    </div>
+    <div style="margin-bottom:16px;">
+      <label style="display:block;font-size:0.85rem;font-weight:bold;margin-bottom:8px;color:#555;">📍 位置</label>
+      <div style="display:flex;gap:6px;">
+        <button class="img-align-btn" data-align="left" style="flex:1;padding:10px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;text-align:center;font-size:0.85rem;">◀ 左寄せ</button>
+        <button class="img-align-btn active" data-align="center" style="flex:1;padding:10px;border:2px solid #e8917a;border-radius:8px;background:#fdf0ed;cursor:pointer;text-align:center;font-size:0.85rem;">▣ 中央</button>
+        <button class="img-align-btn" data-align="right" style="flex:1;padding:10px;border:2px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;text-align:center;font-size:0.85rem;">▶ 右寄せ</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;">
+      <button id="imgEditCancel" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">キャンセル</button>
+      <button id="imgEditInsert" style="padding:8px 20px;border:none;border-radius:8px;background:#e8917a;color:#fff;cursor:pointer;font-weight:bold;">挿入する</button>
+    </div>
+  `;
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  document.getElementById('imgEditCancel').onclick = () => modal.remove();
+
+  // サイズボタン選択
+  let selectedWidth = '800';
+  panel.querySelectorAll('.img-size-btn').forEach(btn => {
+    btn.onclick = function() {
+      panel.querySelectorAll('.img-size-btn').forEach(b => { b.style.borderColor = '#ddd'; b.style.background = '#f8f8f8'; });
+      this.style.borderColor = '#e8917a';
+      this.style.background = '#fdf0ed';
+      selectedWidth = this.dataset.w;
+    };
+  });
+
+  // 位置ボタン選択
+  let selectedAlign = 'center';
+  panel.querySelectorAll('.img-align-btn').forEach(btn => {
+    btn.onclick = function() {
+      panel.querySelectorAll('.img-align-btn').forEach(b => { b.style.borderColor = '#ddd'; b.style.background = '#f8f8f8'; });
+      this.style.borderColor = '#e8917a';
+      this.style.background = '#fdf0ed';
+      selectedAlign = this.dataset.align;
+    };
+  });
+
+  document.getElementById('imgEditInsert').onclick = function() {
+    const alt = (document.getElementById('imgEditAlt').value || '').trim();
+    const caption = (document.getElementById('imgEditCaption').value || '').trim();
+    const shortcode = '{{< img src="' + img.path + '" alt="' + alt + '" caption="' + caption + '" width="' + selectedWidth + '" align="' + selectedAlign + '" >}}';
+    insertAtCursor('\n' + shortcode + '\n');
+    modal.remove();
+    showToast('📷 写真を挿入しました', 'success');
+  };
+
+  setTimeout(() => document.getElementById('imgEditAlt').focus(), 100);
+}
+
+// === 文字サイズピッカー ===
+function showFontSizePicker() {
+  const textarea = document.getElementById('content');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+  savedCursorPos = start;
+
+  let modal = document.getElementById('fontSizeModal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'fontSizeModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;';
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:400px;width:90%;';
+  const sizes = [
+    { label: '極小', size: '0.75rem', desc: '注釈・補足に' },
+    { label: '小', size: '0.85rem', desc: 'キャプション・小さな補足' },
+    { label: '標準', size: '1rem', desc: '通常の本文サイズ' },
+    { label: '大', size: '1.2rem', desc: '強調したい文章' },
+    { label: '特大', size: '1.5rem', desc: 'インパクトのある文章' },
+    { label: '超特大', size: '2rem', desc: '目立つタイトル的な表現' },
+  ];
+  panel.innerHTML = `
+    <h3 style="margin-bottom:12px;">🔤 文字サイズを選択</h3>
+    <div style="margin-bottom:12px;">
+      <input type="text" id="fontSizeText" value="${(selectedText || '').replace(/"/g, '&quot;')}" placeholder="テキストを入力（選択中のテキストがあれば自動入力）"
+        style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="display:flex;flex-direction:column;gap:4px;">
+      ${sizes.map(s => `
+        <button onclick="doInsertFontSize('${s.size}')" style="padding:10px 14px;border:1px solid #ddd;border-radius:8px;background:#f8f8f8;cursor:pointer;text-align:left;display:flex;align-items:center;justify-content:space-between;">
+          <span style="font-size:${s.size};font-weight:bold;">${s.label}</span>
+          <span style="font-size:0.75rem;color:#999;">${s.desc}</span>
+        </button>
+      `).join('')}
+    </div>
+    <div style="text-align:right;margin-top:12px;">
+      <button onclick="document.getElementById('fontSizeModal').remove()" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">キャンセル</button>
+    </div>
+  `;
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  setTimeout(() => { if (!selectedText) document.getElementById('fontSizeText').focus(); }, 100);
+}
+
+function doInsertFontSize(size) {
+  const text = document.getElementById('fontSizeText').value.trim();
+  if (!text) { showToast('テキストを入力してください', 'error'); return; }
+  const code = '<span style="font-size:' + size + '">' + text + '</span>';
+  insertAtCursor(code);
+  document.getElementById('fontSizeModal').remove();
+}
+
+// === 文字色ピッカー ===
+function showColorPicker() {
+  const textarea = document.getElementById('content');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+  savedCursorPos = start;
+
+  let modal = document.getElementById('colorModal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'colorModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.4);z-index:10000;display:flex;align-items:center;justify-content:center;';
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:420px;width:90%;';
+  const colors = [
+    { name: '赤', hex: '#e74c3c' },
+    { name: 'オレンジ', hex: '#e67e22' },
+    { name: '黄色', hex: '#f1c40f' },
+    { name: '緑', hex: '#27ae60' },
+    { name: '青', hex: '#2980b9' },
+    { name: '紫', hex: '#8e44ad' },
+    { name: 'ピンク', hex: '#e8917a' },
+    { name: 'グレー', hex: '#7f8c8d' },
+    { name: '黒', hex: '#2c3e50' },
+    { name: '白（背景色付き）', hex: '#ffffff' },
+  ];
+  panel.innerHTML = `
+    <h3 style="margin-bottom:12px;">🎨 文字色を選択</h3>
+    <div style="margin-bottom:12px;">
+      <input type="text" id="colorText" value="${(selectedText || '').replace(/"/g, '&quot;')}" placeholder="色を付けるテキストを入力"
+        style="width:100%;padding:10px 12px;border:1px solid #ddd;border-radius:8px;font-size:0.9rem;box-sizing:border-box;">
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px;">
+      ${colors.map(c => `
+        <button onclick="doInsertColor('${c.hex}')" title="${c.name}" style="width:100%;aspect-ratio:1;border-radius:50%;border:3px solid #ddd;background:${c.hex};cursor:pointer;transition:transform 0.15s;${c.hex === '#ffffff' ? 'border-color:#ccc;' : ''}" onmouseover="this.style.transform='scale(1.2)'" onmouseout="this.style.transform='scale(1)'"></button>
+      `).join('')}
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+      <label style="font-size:0.85rem;font-weight:bold;color:#555;white-space:nowrap;">カスタム色:</label>
+      <input type="color" id="customColor" value="#e8917a" style="width:40px;height:32px;border:none;cursor:pointer;">
+      <button onclick="doInsertColor(document.getElementById('customColor').value)" style="padding:6px 14px;border:1px solid #ddd;border-radius:6px;background:#f8f8f8;cursor:pointer;font-size:0.82rem;">適用</button>
+    </div>
+    <div style="text-align:right;">
+      <button onclick="document.getElementById('colorModal').remove()" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">キャンセル</button>
+    </div>
+  `;
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+  setTimeout(() => { if (!selectedText) document.getElementById('colorText').focus(); }, 100);
+}
+
+function doInsertColor(hex) {
+  const text = document.getElementById('colorText').value.trim();
+  if (!text) { showToast('テキストを入力してください', 'error'); return; }
+  const code = '<span style="color:' + hex + '">' + text + '</span>';
+  insertAtCursor(code);
+  document.getElementById('colorModal').remove();
 }
 
 // === ヘルパー ===
@@ -1745,6 +2252,78 @@ async function deleteComment(slug, commentId) {
     }
   } catch(e) {
     showToast('削除に失敗しました', 'error');
+  }
+}
+
+// === 背景設定 ===
+const BG_THEMES = {
+  'default':  { name: 'デフォルト',    color: '#fefcfa', accent: '#e8917a', emoji: '📄' },
+  'sakura':   { name: 'さくら',       color: '#fff5f5', accent: '#f5a0a0', emoji: '🌸' },
+  'mint':     { name: 'ミント',       color: '#f0faf6', accent: '#7ab8a8', emoji: '🍃' },
+  'lavender': { name: 'ラベンダー',    color: '#f5f0ff', accent: '#a080d0', emoji: '💜' },
+  'sky':      { name: 'そら',        color: '#f0f6ff', accent: '#80a8d0', emoji: '☁️' },
+  'cream':    { name: 'クリーム',     color: '#fffbf0', accent: '#d4a850', emoji: '🍦' },
+  'peach':    { name: 'ピーチ',      color: '#fff3eb', accent: '#e8917a', emoji: '🍑' },
+  'ocean':    { name: 'オーシャン',    color: '#eef6f9', accent: '#5097b0', emoji: '🌊' },
+  'forest':   { name: 'フォレスト',    color: '#f2f7f0', accent: '#6a9860', emoji: '🌲' },
+  'sunset':   { name: 'サンセット',    color: '#fff0ea', accent: '#e07850', emoji: '🌅' },
+  'night':    { name: 'ナイトモード',   color: '#1a1a2e', accent: '#e94560', emoji: '🌙', dark: true },
+};
+
+let currentBgTheme = 'default';
+
+async function showSettings() {
+  showView('viewSettings');
+  try {
+    const res = await fetch(API_BASE + '/api/settings');
+    const data = await res.json();
+    if (data.success && data.settings.background) {
+      currentBgTheme = data.settings.background;
+    }
+  } catch(e) {}
+  renderBgThemeGrid();
+}
+
+function renderBgThemeGrid() {
+  const grid = document.getElementById('bgThemeGrid');
+  grid.innerHTML = '';
+  Object.entries(BG_THEMES).forEach(([key, theme]) => {
+    const isActive = key === currentBgTheme;
+    const card = document.createElement('div');
+    card.style.cssText = 'border:3px solid ' + (isActive ? '#e8917a' : '#e0e0e0') + ';border-radius:12px;padding:16px;cursor:pointer;text-align:center;transition:all 0.2s;background:' + theme.color + ';' + (theme.dark ? 'color:#e0e0e0;' : '');
+    card.innerHTML = '<div style="font-size:2rem;margin-bottom:8px;">' + theme.emoji + '</div>' +
+      '<div style="font-weight:600;font-size:0.95rem;' + (theme.dark ? 'color:#e0e0e0;' : '') + '">' + theme.name + '</div>' +
+      '<div style="margin-top:8px;height:6px;border-radius:3px;background:' + theme.accent + ';"></div>' +
+      (isActive ? '<div style="margin-top:8px;font-size:0.75rem;color:#e8917a;font-weight:600;">✓ 選択中</div>' : '');
+    card.onmouseover = function() { if (!isActive) this.style.borderColor = '#ccc'; this.style.transform = 'scale(1.03)'; };
+    card.onmouseout = function() { if (!isActive) this.style.borderColor = '#e0e0e0'; this.style.transform = 'scale(1)'; };
+    card.onclick = function() { selectBgTheme(key); };
+    grid.appendChild(card);
+  });
+  document.getElementById('bgCurrentLabel').textContent = '現在のテーマ: ' + BG_THEMES[currentBgTheme].emoji + ' ' + BG_THEMES[currentBgTheme].name;
+}
+
+async function selectBgTheme(key) {
+  if (key === currentBgTheme) return;
+  currentBgTheme = key;
+  renderBgThemeGrid();
+  showLoading('🎨 背景テーマを保存中...');
+  try {
+    const res = await fetch(API_BASE + '/api/settings', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ background: key })
+    });
+    const data = await res.json();
+    hideLoading();
+    if (data.success) {
+      showToast(BG_THEMES[key].emoji + ' 背景を「' + BG_THEMES[key].name + '」に変更しました！公開すると反映されます。', 'success');
+    } else {
+      showToast('保存に失敗しました', 'error');
+    }
+  } catch(e) {
+    hideLoading();
+    showToast('サーバーに接続できません', 'error');
   }
 }
 </script>

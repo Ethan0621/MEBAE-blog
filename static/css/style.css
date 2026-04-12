@@ -1025,6 +1025,16 @@ a:hover {
   text-align: center;
 }
 
+.blog-image.align-left {
+  text-align: left;
+}
+.blog-image.align-center {
+  text-align: center;
+}
+.blog-image.align-right {
+  text-align: right;
+}
+
 .blog-image img {
   max-width: 100%;
   height: auto;

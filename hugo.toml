@@ -54,41 +54,6 @@ enableEmoji = true
   enableAmazonAffiliate = true
   enableWeeeReferral = true
 
-# ─────────────────────────────────────────
-# ホームのカテゴリーボックス（順番通りに表示）
-# 追加する場合は [[params.homeCategories]] を増やすだけ！
-# icon = 絵文字、name = 表示名、url = リンク先
-# ─────────────────────────────────────────
-[[params.homeCategories]]
-  icon = "🇺🇸"
-  name = "アメリカ生活"
-  url = "/categories/アメリカ生活/"
-
-[[params.homeCategories]]
-  icon = "🍳"
-  name = "料理"
-  url = "/categories/料理/"
-
-[[params.homeCategories]]
-  icon = "🛒"
-  name = "Costco"
-  url = "/categories/costco/"
-
-[[params.homeCategories]]
-  icon = "🌻"
-  name = "Trader Joe's"
-  url = "/categories/trader-joes/"
-
-[[params.homeCategories]]
-  icon = "🏪"
-  name = "日系スーパー"
-  url = "/categories/日系スーパー/"
-
-[[params.homeCategories]]
-  icon = "✈️"
-  name = "旅行"
-  url = "/categories/旅行/"
-
 [taxonomies]
   category = "categories"
   tag = "tags"
@@ -127,3 +92,43 @@ enableEmoji = true
   [[related.indices]]
     name = "date"
     weight = 10
+
+
+# ─────────────────────────────────────────
+# ホームのカテゴリーボックス（順番通りに表示）
+# ─────────────────────────────────────────
+
+[[params.homeCategories]]
+  icon = "🇺🇸"
+  name = "アメリカ生活"
+  url = "/categories/アメリカ生活/"
+
+[[params.homeCategories]]
+  icon = "🍳"
+  name = "料理"
+  url = "/categories/料理/"
+
+[[params.homeCategories]]
+  icon = "🛒"
+  name = "Costco"
+  url = "/categories/costco/"
+
+[[params.homeCategories]]
+  icon = "🌻"
+  name = "Trader Joe's"
+  url = "/categories/trader-joes/"
+
+[[params.homeCategories]]
+  icon = "🏪"
+  name = "日系スーパー"
+  url = "/categories/日系スーパー/"
+
+[[params.homeCategories]]
+  icon = "✈️"
+  name = "旅行"
+  url = "/categories/旅行/"
+
+[[params.homeCategories]]
+  icon = "🛍️"
+  name = "買って良かったもの"
+  url = "/categories/買って良かったもの/"

@@ -1,5 +1,6 @@
 {{/* Cloudinary 画像ショートコード */}}
-{{/* 使い方: img src="photo-name.jpg" alt="説明" width="800" */}}
+{{/* 使い方: img src="photo-name.jpg" alt="説明" width="800" align="center" */}}
+{{/* align: left / center / right */}}
 {{/* Cloudinary: img src="cloudinary:folder/photo-name.jpg" alt="説明" */}}
 {{/* ローカル: img src="/images/photo.jpg" alt="説明" */}}
 
@@ -8,6 +9,7 @@
 {{ $width := .Get "width" | default "800" }}
 {{ $caption := .Get "caption" | default "" }}
 {{ $class := .Get "class" | default "" }}
+{{ $align := .Get "align" | default "center" }}
 
 {{ $cloudName := .Site.Params.cloudinaryCloudName }}
 
@@ -18,7 +20,9 @@
   {{ $imgURL = printf "https://res.cloudinary.com/%s/image/upload/f_auto,q_auto,w_%s/%s" $cloudName $width $path }}
 {{ end }}
 
-<figure class="blog-image {{ $class }}">
+{{ $alignClass := printf "align-%s" $align }}
+
+<figure class="blog-image {{ $alignClass }} {{ $class }}">
   <img src="{{ $imgURL }}" alt="{{ $alt }}" loading="lazy" width="{{ $width }}">
   {{ with $caption }}
   <figcaption>{{ . }}</figcaption>

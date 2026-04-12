@@ -131,6 +131,19 @@
   // === フォロー機能（Netlify Forms対応） ===
   const followForm = document.getElementById('followForm');
   const followFormArea = document.getElementById('followFormArea');
+  const followerCountEl = document.getElementById('followerCount');
+
+  // フォロワー数を取得
+  if (followerCountEl) {
+    fetch('/.netlify/functions/follower-count')
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        followerCountEl.textContent = data.count || 0;
+      })
+      .catch(function() {
+        followerCountEl.textContent = '0';
+      });
+  }
 
   // 既にフォロー済みならUIを更新
   function updateFollowUI() {
@@ -163,6 +176,11 @@
           showSocialToast('フォローありがとうございます！🌸');
           localStorage.setItem('mebae_following', 'true');
           localStorage.setItem('mebae_follow_email', email);
+          // フォロワー数を+1
+          if (followerCountEl) {
+            var current = parseInt(followerCountEl.textContent) || 0;
+            followerCountEl.textContent = current + 1;
+          }
           updateFollowUI();
         } else {
           showSocialToast('送信に失敗しました。もう一度お試しください。', true);

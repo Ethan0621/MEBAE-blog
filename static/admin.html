@@ -1071,17 +1071,28 @@ async function uploadFiles(files) {
   showLoading('📸 写真をアップロード中...');
   const formData = new FormData();
   formData.append('folder', slug);
-  Array.from(files).forEach(f => { if (f.type.startsWith('image/')) formData.append('images', f, f.name); });
+  let imageCount = 0;
+  Array.from(files).forEach(f => {
+    if (f.type.startsWith('image/') || /\.(jpg|jpeg|png|gif|webp|heic|heif)$/i.test(f.name)) {
+      formData.append('images', f, f.name);
+      imageCount++;
+    }
+  });
+  if (imageCount === 0) { hideLoading(); showToast('画像ファイルを選択してください', 'error'); return; }
   try {
     const res = await fetch(API_BASE + '/api/images', { method: 'POST', body: formData });
+    if (!res.ok) { throw new Error('サーバーエラー: ' + res.status); }
     const result = await res.json();
     if (result.success) {
       result.uploaded.forEach(img => uploadedImages.push(img));
       renderImageGrid();
       showToast('✅ ' + result.uploaded.length + '枚の写真をアップロードしました', 'success');
+    } else {
+      showToast('アップロードに失敗: ' + (result.error || '不明なエラー'), 'error');
     }
   } catch(e) {
-    showToast('アップロードに失敗しました', 'error');
+    console.error('Upload error:', e);
+    showToast('アップロードに失敗しました: ' + e.message, 'error');
   }
   hideLoading();
 }
@@ -1090,7 +1101,7 @@ function renderImageGrid() {
   const grid = document.getElementById('imagePreviewGrid');
   grid.innerHTML = uploadedImages.map((img, i) => `
     <div class="image-thumb" onclick="insertImagePath('${img.path}')">
-      <img src="${img.path}" alt="${img.filename}" onerror="this.parentElement.style.display='none'">
+      <img src="${API_BASE}${img.path}" alt="${img.filename}" onerror="this.src=''; this.alt='⚠️ 読込失敗'; this.style.cssText='display:flex;align-items:center;justify-content:center;font-size:1.5rem;background:#f5f5f5;width:100%;height:100%;'">
       <div class="copy-path">クリックで挿入</div>
     </div>
   `).join('');

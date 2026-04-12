@@ -383,6 +383,22 @@ async function handleRequest(req, res) {
       return;
     }
 
+    // ========== 画像ファイル配信（サムネイル用） ==========
+    if (pathname.startsWith('/images/')) {
+      const filePath = path.join(BLOG_DIR, 'static', pathname);
+      if (fs.existsSync(filePath)) {
+        const ext = path.extname(filePath).toLowerCase();
+        const mimeMap = { '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.gif': 'image/gif', '.webp': 'image/webp', '.svg': 'image/svg+xml', '.heic': 'image/heic' };
+        const mime = mimeMap[ext] || 'application/octet-stream';
+        res.writeHead(200, { 'Content-Type': mime, 'Access-Control-Allow-Origin': '*', 'Cache-Control': 'no-cache' });
+        fs.createReadStream(filePath).pipe(res);
+      } else {
+        res.writeHead(404, { 'Access-Control-Allow-Origin': '*' });
+        res.end('Not found');
+      }
+      return;
+    }
+
     sendJSON(res, 404, { error: 'Not Found' });
   } catch (err) { console.error('Error:', err); sendJSON(res, 500, { error: err.message }); }
 }

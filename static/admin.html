@@ -712,30 +712,34 @@
     <h2 style="margin-bottom:20px;">❓ 使い方ガイド</h2>
 
     <div class="analytics-section">
-      <h3>📸 写真のアップロード方法</h3>
+      <h3>📸 写真を記事に入れる方法</h3>
       <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
         <p><strong>ステップ１：</strong>記事の編集画面を開く</p>
-        <p><strong>ステップ２：</strong>「📸 写真アップロード」のエリアに写真をドラッグ＆ドロップ、またはクリックして選択</p>
-        <p><strong>ステップ３：</strong>アップロードされた写真のサムネイルをクリックすると、本文に自動挿入されます</p>
-        <div style="background:#f8f4f0;padding:12px 16px;border-radius:8px;margin:12px 0;font-family:monospace;font-size:0.82rem;">
-          {{&lt; img src="/images/フォルダ名/photo.jpg" alt="写真の説明" caption="キャプション" &gt;}}
-        </div>
-        <p style="color:#999;font-size:0.82rem;">💡 iPhoneの写真アプリから直接ドラッグ＆ドロップできます</p>
+        <p><strong>ステップ２：</strong>「📸 写真アップロード」エリアに写真をドラッグ＆ドロップ、またはクリックして選択</p>
+        <p><strong>ステップ３：</strong>写真を本文に挿入する（2つの方法）</p>
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+          <tr style="border-bottom:1px solid #ede7e0;">
+            <td style="padding:8px;font-weight:bold;">方法A</td>
+            <td style="padding:8px;">アップロード後に表示される<strong>サムネイルをクリック</strong></td>
+          </tr>
+          <tr>
+            <td style="padding:8px;font-weight:bold;">方法B</td>
+            <td style="padding:8px;">本文エリア上の<strong>「📷 写真を挿入」ボタン</strong>をクリック → 写真選択画面から選ぶ</td>
+          </tr>
+        </table>
+        <p style="color:#999;font-size:0.82rem;">💡 iPhoneの写真アプリから直接ドラッグ＆ドロップもできます</p>
+        <p style="color:#999;font-size:0.82rem;">💡 HEIC形式（iPhone写真）にも対応しています</p>
       </div>
     </div>
 
     <div class="analytics-section">
       <h3>🖼️ 複数の写真をギャラリー表示</h3>
       <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
-        <p>本文に写真を続けて挿入すれば、自動的にきれいに並びます。</p>
-        <p>ギャラリーにしたい場合は、以下のように囲みます：</p>
-        <div style="background:#f8f4f0;padding:12px 16px;border-radius:8px;margin:12px 0;font-family:monospace;font-size:0.82rem;">
-          {{&lt; gallery &gt;}}<br>
-          {{&lt; img src="/images/photo1.jpg" alt="写真1" &gt;}}<br>
-          {{&lt; img src="/images/photo2.jpg" alt="写真2" &gt;}}<br>
-          {{&lt; img src="/images/photo3.jpg" alt="写真3" &gt;}}<br>
-          {{&lt; /gallery &gt;}}
-        </div>
+        <p><strong>ステップ１：</strong>写真を複数枚アップロードする</p>
+        <p><strong>ステップ２：</strong>本文エリア上の<strong>「🖼️ ギャラリー」ボタン</strong>をクリック</p>
+        <p><strong>ステップ３：</strong>ギャラリーに入れたい写真を<strong>複数選択</strong>（クリックで✅）</p>
+        <p><strong>ステップ４：</strong>「挿入する」ボタンを押す → ギャラリーが自動生成されます</p>
+        <p style="color:#999;font-size:0.82rem;">💡 選択した写真がきれいに並んで表示されます</p>
       </div>
     </div>
 
@@ -781,7 +785,7 @@
     </div>
 
     <div class="analytics-section">
-      <h3>� ホームのカテゴリーを管理する</h3>
+      <h3>📂 ホームのカテゴリーを管理する</h3>
       <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
         <p>トップページに表示されるカテゴリーボックスの追加・削除・並び替えができます。</p>
         <p><strong>ステップ１：</strong>ヘッダーの「📂 カテゴリー」ボタンをクリック</p>
@@ -815,7 +819,7 @@
     </div>
 
     <div class="analytics-section">
-      <h3>�🚀 記事を公開する手順</h3>
+      <h3>🚀 記事を公開する手順</h3>
       <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
         <p><strong>①</strong> 記事を書いて「💾 保存する」をクリック</p>
         <p><strong>②</strong> 「👀 サイトプレビュー」で確認</p>

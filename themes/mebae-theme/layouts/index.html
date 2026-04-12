@@ -18,30 +18,12 @@
 {{/* 人気カテゴリー */}}
 <section class="category-nav">
   <div class="category-cards">
-    <a href="/categories/料理/" class="category-card">
-      <span class="category-icon">🍳</span>
-      <span class="category-name">料理</span>
+    {{ range .Site.Params.homeCategories }}
+    <a href="{{ .url }}" class="category-card">
+      <span class="category-icon">{{ .icon }}</span>
+      <span class="category-name">{{ .name }}</span>
     </a>
-    <a href="/categories/costco/" class="category-card">
-      <span class="category-icon">🛒</span>
-      <span class="category-name">Costco</span>
-    </a>
-    <a href="/categories/trader-joes/" class="category-card">
-      <span class="category-icon">🌻</span>
-      <span class="category-name">Trader Joe's</span>
-    </a>
-    <a href="/categories/日系スーパー/" class="category-card">
-      <span class="category-icon">🏪</span>
-      <span class="category-name">日系スーパー</span>
-    </a>
-    <a href="/categories/アメリカ生活/" class="category-card">
-      <span class="category-icon">🇺🇸</span>
-      <span class="category-name">アメリカ生活</span>
-    </a>
-    <a href="/categories/旅行/" class="category-card">
-      <span class="category-icon">✈️</span>
-      <span class="category-name">旅行</span>
-    </a>
+    {{ end }}
   </div>
 </section>
 

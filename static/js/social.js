@@ -128,74 +128,58 @@
       .catch(() => {});
   }
 
-  // === フォロー機能 ===
+  // === フォロー機能（Netlify Forms対応） ===
   const followForm = document.getElementById('followForm');
-  const followerCountEl = document.getElementById('followerCount');
+  const followFormArea = document.getElementById('followFormArea');
 
-  if (followForm && API_BASE) {
-    // フォロワー数を取得
-    fetch(API_BASE + '/api/followers')
-      .then(r => r.json())
-      .then(data => { if (followerCountEl) followerCountEl.textContent = data.count || 0; })
-      .catch(() => {});
+  // 既にフォロー済みならUIを更新
+  function updateFollowUI() {
+    if (!followFormArea) return;
+    if (localStorage.getItem('mebae_following') === 'true') {
+      followFormArea.innerHTML = '<p class="follow-thanks">🌸 フォロー中です！ありがとうございます。<br><button type="button" class="unfollow-btn" onclick="unfollowBlog()">フォロー解除</button></p>';
+    }
+  }
 
+  if (followForm) {
     followForm.addEventListener('submit', function(e) {
       e.preventDefault();
-      const email = document.getElementById('followEmail').value.trim();
-      const name = document.getElementById('followName') ? document.getElementById('followName').value.trim() : '';
+      var email = document.getElementById('followEmail').value.trim();
+      var name = document.getElementById('followName') ? document.getElementById('followName').value.trim() : '';
       if (!email) { showSocialToast('メールアドレスを入力してください', true); return; }
 
-      fetch(API_BASE + '/api/follow', {
+      // Netlify Formsへ送信
+      var formData = new URLSearchParams();
+      formData.append('form-name', 'follow');
+      formData.append('email', email);
+      formData.append('name', name);
+
+      fetch('/', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, name }),
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: formData.toString()
       })
-      .then(r => r.json())
-      .then(data => {
-        if (data.success) {
-          showSocialToast(data.message + ' 🌸');
-          if (data.count && followerCountEl) followerCountEl.textContent = data.count;
-          followForm.reset();
+      .then(function(response) {
+        if (response.ok) {
+          showSocialToast('フォローありがとうございます！🌸');
           localStorage.setItem('mebae_following', 'true');
           localStorage.setItem('mebae_follow_email', email);
           updateFollowUI();
-        } else if (data.error) {
-          showSocialToast(data.error, true);
+        } else {
+          showSocialToast('送信に失敗しました。もう一度お試しください。', true);
         }
       })
-      .catch(() => showSocialToast('フォローに失敗しました', true));
+      .catch(function() { showSocialToast('送信に失敗しました。', true); });
     });
 
     updateFollowUI();
   }
 
-  function updateFollowUI() {
-    if (!followForm) return;
-    if (localStorage.getItem('mebae_following') === 'true') {
-      const formInner = followForm.querySelector('.follow-form-inner');
-      if (formInner) {
-        formInner.innerHTML = '<p class="follow-thanks">🌸 フォロー中です！ありがとうございます。<br><button type="button" class="unfollow-btn" onclick="unfollowBlog()">フォロー解除</button></p>';
-      }
-    }
-  }
-
   // グローバルに公開
   window.unfollowBlog = function() {
-    const email = localStorage.getItem('mebae_follow_email');
-    if (!email || !API_BASE) return;
-    fetch(API_BASE + '/api/unfollow', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
-    })
-    .then(r => r.json())
-    .then(() => {
-      localStorage.removeItem('mebae_following');
-      localStorage.removeItem('mebae_follow_email');
-      showSocialToast('フォローを解除しました');
-      location.reload();
-    })
-    .catch(() => {});
+    localStorage.removeItem('mebae_following');
+    localStorage.removeItem('mebae_follow_email');
+    showSocialToast('フォローを解除しました');
+    location.reload();
   };
 
   // === ヘルパー ===

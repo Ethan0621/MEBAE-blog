@@ -68,14 +68,16 @@
 <section class="follow-section">
   <h3>🌸 ブログをフォローする</h3>
   <p class="follow-desc">新しい記事が公開されたらお知らせします</p>
-  <div class="follower-badge">👥 フォロワー <span id="followerCount">0</span>人</div>
-  <form id="followForm" onsubmit="return false;">
-    <div class="follow-form-inner">
-      <input type="text" id="followName" placeholder="お名前（任意）">
-      <input type="email" id="followEmail" placeholder="メールアドレス" required>
-      <button type="submit">🌸 フォローする</button>
-    </div>
-  </form>
+  <div id="followFormArea">
+    <form id="followForm" name="follow" method="POST" data-netlify="true" action="/">
+      <input type="hidden" name="form-name" value="follow">
+      <div class="follow-form-inner">
+        <input type="text" name="name" id="followName" placeholder="お名前（任意）">
+        <input type="email" name="email" id="followEmail" placeholder="メールアドレス" required>
+        <button type="submit">🌸 フォローする</button>
+      </div>
+    </form>
+  </div>
 </section>
 
 </div>

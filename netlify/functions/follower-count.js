@@ -6,7 +6,7 @@ exports.handler = async function(event, context) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ count: 0, debug: 'missing_env', hasToken: !!token, hasSiteId: !!siteId })
+      body: JSON.stringify({ count: 0 })
     };
   }
 
@@ -14,21 +14,13 @@ exports.handler = async function(event, context) {
     var formsRes = await fetch('https://api.netlify.com/api/v1/sites/' + siteId + '/forms', {
       headers: { 'Authorization': 'Bearer ' + token }
     });
-    var formsText = await formsRes.text();
-    var forms;
-    try { forms = JSON.parse(formsText); } catch(e) { 
-      return {
-        statusCode: 200,
-        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ count: 0, debug: 'parse_error', status: formsRes.status, response: formsText.substring(0, 200) })
-      };
-    }
+    var forms = await formsRes.json();
 
     if (!Array.isArray(forms)) {
       return {
         statusCode: 200,
         headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-        body: JSON.stringify({ count: 0, debug: 'not_array', response: JSON.stringify(forms).substring(0, 200) })
+        body: JSON.stringify({ count: 0 })
       };
     }
 
@@ -49,13 +41,13 @@ exports.handler = async function(event, context) {
         'Access-Control-Allow-Origin': '*',
         'Cache-Control': 'public, max-age=60'
       },
-      body: JSON.stringify({ count: count, formFound: !!followForm, totalForms: forms.length })
+      body: JSON.stringify({ count: count })
     };
   } catch (err) {
     return {
       statusCode: 200,
       headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
-      body: JSON.stringify({ count: 0, debug: 'error', message: err.message })
+      body: JSON.stringify({ count: 0 })
     };
   }
 };

@@ -220,6 +220,21 @@ async function handleRequest(req, res) {
       return;
     }
 
+    // ========== 画像削除 ==========
+    if (pathname === '/api/images' && req.method === 'DELETE') {
+      const raw = await readBody(req);
+      const d = JSON.parse(raw.toString('utf-8'));
+      if (!d.path) { sendJSON(res, 400, { error: 'pathが必要' }); return; }
+      // パストラバーサル防止
+      const resolved = path.resolve(path.join(BLOG_DIR, 'static', d.path));
+      const imagesBase = path.resolve(IMAGES_DIR);
+      if (!resolved.startsWith(imagesBase)) { sendJSON(res, 403, { error: '不正なパス' }); return; }
+      if (!fs.existsSync(resolved)) { sendJSON(res, 404, { error: 'ファイルが見つかりません' }); return; }
+      fs.unlinkSync(resolved);
+      sendJSON(res, 200, { success: true, message: '画像を削除しました' });
+      return;
+    }
+
     // ========== 画像一覧 ==========
     if (pathname === '/api/images' && req.method === 'GET') {
       const folderParam = url.searchParams.get('folder');

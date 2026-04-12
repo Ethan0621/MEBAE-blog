@@ -1,0 +1,131 @@
+{{ define "main" }}
+<article class="single-post">
+  {{/* 記事ヘッダー */}}
+  <header class="post-header">
+    <div class="post-meta">
+      {{ with .Params.categories }}
+      <div class="post-categories">
+        {{ range . }}
+        <a href="{{ "/categories/" | relURL }}{{ . | urlize }}/" class="post-category">{{ . }}</a>
+        {{ end }}
+      </div>
+      {{ end }}
+      <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006年01月02日" }}</time>
+    </div>
+    <h1 class="post-title">{{ .Title }}</h1>
+    {{ if .Description }}
+    <p class="post-description">{{ .Description }}</p>
+    {{ end }}
+  </header>
+
+  {{/* アイキャッチ画像 */}}
+  {{ if .Params.image }}
+  <figure class="post-featured-image">
+    <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy">
+  </figure>
+  {{ end }}
+
+  {{/* AdSense（記事上部） */}}
+  {{ if .Site.Params.monetization.enableAdsense }}
+  <div class="ad-container ad-post-top">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="{{ .Site.Params.googleAdsenseId }}"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  {{ end }}
+
+  {{/* 目次 */}}
+  {{ if .TableOfContents }}
+  <details class="toc" open>
+    <summary>目次</summary>
+    {{ .TableOfContents }}
+  </details>
+  {{ end }}
+
+  {{/* 記事本文 */}}
+  <div class="post-content">
+    {{ .Content }}
+  </div>
+
+  {{/* AdSense（記事下部） */}}
+  {{ if .Site.Params.monetization.enableAdsense }}
+  <div class="ad-container ad-post-bottom">
+    <ins class="adsbygoogle"
+         style="display:block"
+         data-ad-client="{{ .Site.Params.googleAdsenseId }}"
+         data-ad-slot="XXXXXXXXXX"
+         data-ad-format="auto"
+         data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+  </div>
+  {{ end }}
+
+  {{/* タグ */}}
+  {{ with .Params.tags }}
+  <div class="post-tags">
+    <span class="tags-label">タグ:</span>
+    {{ range . }}
+    <a href="{{ "/tags/" | relURL }}{{ . | urlize }}/" class="tag">#{{ . }}</a>
+    {{ end }}
+  </div>
+  {{ end }}
+
+  {{/* SNSシェアボタン */}}
+  <div class="share-buttons">
+    <span class="share-label">シェアする:</span>
+    <a href="https://twitter.com/intent/tweet?url={{ .Permalink }}&text={{ .Title | urlquery }}" target="_blank" rel="noopener" class="share-btn share-twitter" aria-label="Twitterでシェア">
+      𝕏 ポスト
+    </a>
+    <a href="https://www.facebook.com/sharer/sharer.php?u={{ .Permalink }}" target="_blank" rel="noopener" class="share-btn share-facebook" aria-label="Facebookでシェア">
+      📘 Facebook
+    </a>
+    <a href="https://social-plugins.line.me/lineit/share?url={{ .Permalink }}" target="_blank" rel="noopener" class="share-btn share-line" aria-label="LINEで送る">
+      💚 LINE
+    </a>
+    <a href="https://b.hatena.ne.jp/entry/{{ .Permalink }}" target="_blank" rel="noopener" class="share-btn share-hatena" aria-label="はてなブックマーク">
+      B! はてブ
+    </a>
+  </div>
+
+  {{/* 関連記事 */}}
+  {{ $related := .Site.RegularPages.Related . | first 4 }}
+  {{ with $related }}
+  <section class="related-posts">
+    <h2>関連する記事</h2>
+    <div class="related-grid">
+      {{ range . }}
+      <a href="{{ .Permalink }}" class="related-card">
+        {{ if .Params.image }}
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy">
+        {{ end }}
+        <div class="related-info">
+          <span class="related-date">{{ .Date.Format "2006.01.02" }}</span>
+          <h3>{{ .Title }}</h3>
+        </div>
+      </a>
+      {{ end }}
+    </div>
+  </section>
+  {{ end }}
+
+  {{/* 前後の記事ナビゲーション */}}
+  <nav class="post-navigation">
+    {{ with .PrevInSection }}
+    <a href="{{ .Permalink }}" class="nav-prev">
+      <span class="nav-label">← 前の記事</span>
+      <span class="nav-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+    {{ with .NextInSection }}
+    <a href="{{ .Permalink }}" class="nav-next">
+      <span class="nav-label">次の記事 →</span>
+      <span class="nav-title">{{ .Title }}</span>
+    </a>
+    {{ end }}
+  </nav>
+</article>
+{{ end }}

@@ -1,0 +1,26 @@
+{{/* Cloudinary 画像ショートコード */}}
+{{/* 使い方: img src="photo-name.jpg" alt="説明" width="800" */}}
+{{/* Cloudinary: img src="cloudinary:folder/photo-name.jpg" alt="説明" */}}
+{{/* ローカル: img src="/images/photo.jpg" alt="説明" */}}
+
+{{ $src := .Get "src" }}
+{{ $alt := .Get "alt" | default "" }}
+{{ $width := .Get "width" | default "800" }}
+{{ $caption := .Get "caption" | default "" }}
+{{ $class := .Get "class" | default "" }}
+
+{{ $cloudName := .Site.Params.cloudinaryCloudName }}
+
+{{/* Cloudinary の場合 */}}
+{{ $imgURL := $src }}
+{{ if hasPrefix $src "cloudinary:" }}
+  {{ $path := strings.TrimPrefix "cloudinary:" $src }}
+  {{ $imgURL = printf "https://res.cloudinary.com/%s/image/upload/f_auto,q_auto,w_%s/%s" $cloudName $width $path }}
+{{ end }}
+
+<figure class="blog-image {{ $class }}">
+  <img src="{{ $imgURL }}" alt="{{ $alt }}" loading="lazy" width="{{ $width }}">
+  {{ with $caption }}
+  <figcaption>{{ . }}</figcaption>
+  {{ end }}
+</figure>

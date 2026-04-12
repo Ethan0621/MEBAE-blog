@@ -1,0 +1,104 @@
+{{ define "main" }}
+{{/* ヒーローセクション */}}
+<section class="hero">
+  <div class="hero-content">
+    <h1>{{ .Site.Title }}</h1>
+    <p class="hero-subtitle">{{ .Site.Params.bio }}</p>
+    <div class="hero-tags">
+      <span class="tag">#アメリカ生活</span>
+      <span class="tag">#ロサンゼルス</span>
+      <span class="tag">#買い物</span>
+      <span class="tag">#Trader Joe's</span>
+      <span class="tag">#Costco</span>
+      <span class="tag">#旅行</span>
+    </div>
+  </div>
+</section>
+
+{{/* 人気カテゴリー */}}
+<section class="category-nav">
+  <div class="category-cards">
+    <a href="/categories/料理/" class="category-card">
+      <span class="category-icon">🍳</span>
+      <span class="category-name">料理</span>
+    </a>
+    <a href="/categories/costco/" class="category-card">
+      <span class="category-icon">🛒</span>
+      <span class="category-name">Costco</span>
+    </a>
+    <a href="/categories/trader-joes/" class="category-card">
+      <span class="category-icon">🌻</span>
+      <span class="category-name">Trader Joe's</span>
+    </a>
+    <a href="/categories/日系スーパー/" class="category-card">
+      <span class="category-icon">🏪</span>
+      <span class="category-name">日系スーパー</span>
+    </a>
+    <a href="/categories/アメリカ生活/" class="category-card">
+      <span class="category-icon">🇺🇸</span>
+      <span class="category-name">アメリカ生活</span>
+    </a>
+    <a href="/categories/旅行/" class="category-card">
+      <span class="category-icon">✈️</span>
+      <span class="category-name">旅行</span>
+    </a>
+  </div>
+</section>
+
+{{/* 最新記事 */}}
+<section class="latest-posts">
+  <h2 class="section-title">✨ 最新の記事</h2>
+  <div class="posts-grid">
+    {{ $paginator := .Paginate (where .Site.RegularPages "Type" "posts") }}
+    {{ range $paginator.Pages }}
+    <article class="post-card">
+      {{ if .Params.image }}
+      <a href="{{ .Permalink }}" class="post-card-image">
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy">
+      </a>
+      {{ end }}
+      <div class="post-card-content">
+        <div class="post-card-meta">
+          {{ with .Params.categories }}
+          {{ range first 1 . }}
+          <span class="post-category">{{ . }}</span>
+          {{ end }}
+          {{ end }}
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006年01月02日" }}</time>
+        </div>
+        <h3 class="post-card-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+        <p class="post-card-excerpt">{{ .Summary | plainify | truncate 120 }}</p>
+        <a href="{{ .Permalink }}" class="read-more">続きを読む →</a>
+      </div>
+    </article>
+    {{ end }}
+  </div>
+
+  {{/* ページネーション */}}
+  {{ if gt $paginator.TotalPages 1 }}
+  <nav class="pagination">
+    {{ if $paginator.HasPrev }}
+    <a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← 前のページ</a>
+    {{ end }}
+    <span class="pagination-info">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
+    {{ if $paginator.HasNext }}
+    <a href="{{ $paginator.Next.URL }}" class="pagination-next">次のページ →</a>
+    {{ end }}
+  </nav>
+  {{ end }}
+</section>
+
+{{/* AdSense（トップページ下部） */}}
+{{ if .Site.Params.monetization.enableAdsense }}
+<div class="ad-container ad-home-bottom">
+  <ins class="adsbygoogle"
+       style="display:block"
+       data-ad-client="{{ .Site.Params.googleAdsenseId }}"
+       data-ad-slot="XXXXXXXXXX"
+       data-ad-format="auto"
+       data-full-width-responsive="true"></ins>
+  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
+</div>
+{{ end }}
+
+{{ end }}

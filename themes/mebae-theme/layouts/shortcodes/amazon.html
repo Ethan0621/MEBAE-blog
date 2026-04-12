@@ -1,0 +1,19 @@
+{{/* Amazon アフィリエイトリンク ショートコード */}}
+{{/* 使い方: amazon title="商品名" asin="B08EXAMPLE" description="説明" */}}
+{{ $title := .Get "title" }}
+{{ $asin := .Get "asin" }}
+{{ $description := .Get "description" }}
+{{ $tag := .Site.Params.amazonAssociateId }}
+
+<div class="amazon-box">
+  <a href="https://www.amazon.com/dp/{{ $asin }}?tag={{ $tag }}" target="_blank" rel="noopener sponsored">
+    <img src="https://images-na.ssl-images-amazon.com/images/P/{{ $asin }}.01.LZZZZZZZ.jpg" alt="{{ $title }}" loading="lazy">
+  </a>
+  <div class="amazon-box-info">
+    <h4>{{ $title }}</h4>
+    {{ with $description }}<p>{{ . }}</p>{{ end }}
+    <a href="https://www.amazon.com/dp/{{ $asin }}?tag={{ $tag }}" target="_blank" rel="noopener sponsored" class="amazon-btn">
+      🛒 Amazonで見る
+    </a>
+  </div>
+</div>

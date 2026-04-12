@@ -1,0 +1,84 @@
+baseURL = "https://mebae-california.com"
+languageCode = "ja"
+title = "めばえのカリフォルニアブログ"
+theme = "mebae-theme"
+defaultContentLanguage = "ja"
+hasCJKLanguage = true
+paginate = 10
+enableRobotsTXT = true
+enableEmoji = true
+
+# 日本語SEO対策
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.tableOfContents]
+    startLevel = 2
+    endLevel = 4
+
+[params]
+  description = "ロサンゼルス在住めばえのブログ。アメリカ生活、料理、買い物、日系スーパー、Costco、Trader Joe'sなど日々の暮らしを綴っています。"
+  author = "めばえ"
+  authorImage = "/images/profile.jpg"
+  ogImage = "/images/og-default.jpg"
+  locale = "ja_JP"
+  # Google AdSense
+  googleAdsenseId = "ca-pub-XXXXXXXXXXXXXXXXX"
+  # Google Analytics
+  googleAnalyticsId = "G-XXXXXXXXXX"
+  # Amazon アソシエイトID
+  amazonAssociateId = "mebae-20"
+  # Weee! リファラルリンク
+  weeeReferralLink = "https://www.sayweee.com/ja/account/referral/landing?t=1&referral_id=15518302&lang=ja"
+  # Cloudinary（画像ホスティング）
+  cloudinaryCloudName = "your-cloud-name"
+  # SNS
+  twitterHandle = ""
+  instagramHandle = ""
+  # 自己紹介
+  bio = "はじめまして！アメリカ在住のめばえです。ロサンゼルスでの日々の暮らし、料理、お買い物情報などを発信しています。"
+
+[params.monetization]
+  enableAdsense = true
+  enableAmazonAffiliate = true
+  enableWeeeReferral = true
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  series = "series"
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "ホーム"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "about"
+    name = "プロフィール"
+    url = "/about/"
+    weight = 2
+
+[outputs]
+  home = ["HTML", "RSS", "JSON"]
+  section = ["HTML", "RSS"]
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5
+
+[related]
+  threshold = 80
+  includeNewer = true
+  toLower = true
+  [[related.indices]]
+    name = "categories"
+    weight = 100
+  [[related.indices]]
+    name = "tags"
+    weight = 80
+  [[related.indices]]
+    name = "date"
+    weight = 10

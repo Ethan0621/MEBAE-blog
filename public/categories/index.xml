@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Categories on めばえのカリフォルニアブログ</title>
+    <link>http://localhost:1313/categories/</link>
+    <description>Recent content in Categories on めばえのカリフォルニアブログ</description>
+    <generator>Hugo</generator>
+    <language>ja</language>
+    <lastBuildDate>Fri, 10 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>料理</title>
+      <link>http://localhost:1313/categories/%E6%96%99%E7%90%86/</link>
+      <pubDate>Fri, 10 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E6%96%99%E7%90%86/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>アメリカ生活</title>
+      <link>http://localhost:1313/categories/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E7%94%9F%E6%B4%BB/</link>
+      <pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E7%94%9F%E6%B4%BB/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Costco</title>
+      <link>http://localhost:1313/categories/costco/</link>
+      <pubDate>Thu, 02 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/costco/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>日系スーパー</title>
+      <link>http://localhost:1313/categories/%E6%97%A5%E7%B3%BB%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC/</link>
+      <pubDate>Wed, 01 Apr 2026 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E6%97%A5%E7%B3%BB%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Trader Joe&#39;s</title>
+      <link>http://localhost:1313/categories/trader-joes/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/trader-joes/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>アジア系スーパー</title>
+      <link>http://localhost:1313/categories/%E3%82%A2%E3%82%B8%E3%82%A2%E7%B3%BB%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E3%82%A2%E3%82%B8%E3%82%A2%E7%B3%BB%E3%82%B9%E3%83%BC%E3%83%91%E3%83%BC/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>旅行</title>
+      <link>http://localhost:1313/categories/%E6%97%85%E8%A1%8C/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      <guid>http://localhost:1313/categories/%E6%97%85%E8%A1%8C/</guid>
+      <description></description>
+    </item>
+  </channel>
+</rss>

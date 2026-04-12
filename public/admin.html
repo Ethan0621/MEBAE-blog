@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>📝 めばえブログ 管理画面</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans JP', -apple-system, sans-serif;
+      background: #fefcfa;
+      color: #3d3d3d;
+      line-height: 1.6;
+    }
+    .admin-header {
+      background: linear-gradient(135deg, #e8917a, #f4a593);
+      color: white;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .admin-header h1 { font-size: 1.2rem; }
+    .admin-header .site-link {
+      color: white;
+      text-decoration: none;
+      font-size: 0.85rem;
+      opacity: 0.9;
+    }
+    .container {
+      max-width: 800px;
+      margin: 24px auto;
+      padding: 0 16px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    label {
+      display: block;
+      font-weight: bold;
+      margin-bottom: 6px;
+      font-size: 0.9rem;
+    }
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 10px 14px;
+      border: 2px solid #ede7e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      transition: border-color 0.3s;
+    }
+    input[type="text"]:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: #e8917a;
+    }
+    textarea {
+      min-height: 400px;
+      resize: vertical;
+    }
+    .tags-input {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding: 8px;
+      border: 2px solid #ede7e0;
+      border-radius: 8px;
+      min-height: 44px;
+      cursor: text;
+    }
+    .tags-input:focus-within { border-color: #e8917a; }
+    .tags-input .tag {
+      background: #fdf0ed;
+      color: #d4705a;
+      padding: 4px 10px;
+      border-radius: 16px;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .tags-input .tag .remove {
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1rem;
+    }
+    .tags-input input {
+      border: none;
+      padding: 4px;
+      flex: 1;
+      min-width: 120px;
+      font-size: 0.9rem;
+    }
+    .tags-input input:focus { outline: none; }
+    .btn-row {
+      display: flex;
+      gap: 12px;
+      margin-top: 24px;
+    }
+    .btn {
+      padding: 12px 28px;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .btn-primary {
+      background: #e8917a;
+      color: white;
+    }
+    .btn-primary:hover { background: #d4705a; }
+    .btn-secondary {
+      background: #ede7e0;
+      color: #3d3d3d;
+    }
+    .btn-secondary:hover { background: #ddd7d0; }
+    .btn-copy {
+      background: #7ab8a8;
+      color: white;
+    }
+    .btn-copy:hover { background: #5fa090; }
+    .preview-panel {
+      background: white;
+      border: 2px solid #ede7e0;
+      border-radius: 12px;
+      padding: 24px;
+      margin-top: 20px;
+      display: none;
+    }
+    .preview-panel.active { display: block; }
+    .preview-panel h2 { margin-bottom: 12px; color: #e8917a; }
+    .output-box {
+      background: #f5f0eb;
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'SF Mono', monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      word-break: break-all;
+      max-height: 500px;
+      overflow-y: auto;
+      line-height: 1.5;
+    }
+    .help-text {
+      font-size: 0.8rem;
+      color: #999;
+      margin-top: 4px;
+    }
+    .shortcode-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 8px;
+    }
+    .shortcode-btn {
+      padding: 6px 12px;
+      background: #e8f5f1;
+      border: 1px solid #7ab8a8;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #3d3d3d;
+    }
+    .shortcode-btn:hover { background: #7ab8a8; color: white; }
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #4caf50;
+      color: white;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: bold;
+      display: none;
+      z-index: 100;
+      animation: fadeIn 0.3s;
+    }
+    .toast.show { display: block; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    .image-drop-zone {
+      border: 2px dashed #ede7e0;
+      border-radius: 8px;
+      padding: 24px;
+      text-align: center;
+      color: #999;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .image-drop-zone:hover, .image-drop-zone.dragover {
+      border-color: #e8917a;
+      background: #fdf0ed;
+      color: #e8917a;
+    }
+    .image-preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .image-preview-item {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+    .image-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+    .image-preview-item .remove-img {
+      position: absolute;
+      top: -6px;
+      right: -6px;
+      background: #e8917a;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 12px;
+      cursor: pointer;
+      line-height: 1;
+    }
+  </style>
+</head>
+<body>
+
+<header class="admin-header">
+  <h1>🌸 めばえブログ 管理画面</h1>
+  <a href="http://localhost:1313/" target="_blank" class="site-link">サイトを表示 →</a>
+</header>
+
+<div class="container">
+
+  <!-- タイトル -->
+  <div class="form-group">
+    <label for="title">📝 記事タイトル</label>
+    <input type="text" id="title" placeholder="例: コストコで買ったおすすめ商品！">
+  </div>
+
+  <!-- カテゴリー -->
+  <div class="form-group">
+    <label for="category">📂 カテゴリー</label>
+    <select id="category">
+      <option value="料理">🍳 料理</option>
+      <option value="Costco">🛒 Costco</option>
+      <option value="Trader Joe's">🌻 Trader Joe's</option>
+      <option value="日系スーパー">🏪 日系スーパー</option>
+      <option value="アジア系スーパー">🏬 アジア系スーパー</option>
+      <option value="アメリカ生活" selected>🇺🇸 アメリカ生活</option>
+      <option value="旅行">✈️ 旅行</option>
+    </select>
+  </div>
+
+  <!-- タグ -->
+  <div class="form-group">
+    <label>🏷️ タグ</label>
+    <div class="tags-input" id="tagsContainer">
+      <input type="text" id="tagInput" placeholder="タグを入力してEnter">
+    </div>
+    <p class="help-text">Enterキーでタグを追加。例: ロサンゼルス、買い物、お昼ご飯</p>
+  </div>
+
+  <!-- 説明文 -->
+  <div class="form-group">
+    <label for="description">📄 説明文（Google検索に表示されます）</label>
+    <input type="text" id="description" placeholder="例: コストコで見つけたお気に入り商品を紹介します">
+  </div>
+
+  <!-- 画像アップロード -->
+  <div class="form-group">
+    <label>📸 写真</label>
+    <div class="image-drop-zone" id="dropZone">
+      📷 ここにドラッグ＆ドロップ、またはクリックして写真を選択
+      <input type="file" id="imageInput" multiple accept="image/*" style="display:none">
+    </div>
+    <div class="image-preview-list" id="imagePreviewList"></div>
+    <p class="help-text">写真は static/images/ フォルダに保存してください</p>
+  </div>
+
+  <!-- 本文 -->
+  <div class="form-group">
+    <label for="content">✍️ 本文</label>
+    <div class="shortcode-bar">
+      <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真</button>
+      <button class="shortcode-btn" onclick="insertShortcode('gallery')">🖼️ ギャラリー</button>
+      <button class="shortcode-btn" onclick="insertShortcode('youtube')">🎥 YouTube</button>
+      <button class="shortcode-btn" onclick="insertShortcode('amazon')">🛒 Amazon</button>
+      <button class="shortcode-btn" onclick="insertShortcode('h2')">📌 見出し</button>
+      <button class="shortcode-btn" onclick="insertShortcode('bold')">太字</button>
+      <button class="shortcode-btn" onclick="insertShortcode('link')">🔗 リンク</button>
+    </div>
+    <textarea id="content" placeholder="ここに記事の本文を書いてください...&#10;&#10;Markdownが使えます:&#10;## 見出し&#10;**太字**&#10;- リスト&#10;[リンク](URL)"></textarea>
+  </div>
+
+  <!-- ボタン -->
+  <div class="btn-row">
+    <button class="btn btn-primary" onclick="generatePost()">📄 記事ファイルを生成</button>
+    <button class="btn btn-secondary" onclick="togglePreview()">👀 プレビュー</button>
+  </div>
+
+  <!-- 出力 -->
+  <div class="preview-panel" id="outputPanel">
+    <h2>📄 生成された記事ファイル</h2>
+    <p class="help-text" style="margin-bottom:12px;">
+      以下の内容をコピーして、<code>content/posts/</code> フォルダに <code>.md</code> ファイルとして保存してください。
+    </p>
+    <button class="btn btn-copy" onclick="copyOutput()">📋 コピー</button>
+    <div class="output-box" id="outputBox"></div>
+  </div>
+
+  <!-- ファイル保存手順 -->
+  <div class="preview-panel" id="saveGuide" style="display:none; margin-top:16px;">
+    <h2>💾 ファイルの保存方法</h2>
+    <ol style="padding-left:20px; line-height:2;">
+      <li>上の「📋 コピー」ボタンを押す</li>
+      <li>VS Codeを開く</li>
+      <li><code>content/posts/</code> フォルダを右クリック → 「新しいファイル」</li>
+      <li>ファイル名を <strong id="suggestedFilename">post.md</strong> にする</li>
+      <li>コピーした内容を貼り付けて保存（⌘+S）</li>
+      <li>ターミナルで <code>./publish.sh</code> を実行して公開！</li>
+    </ol>
+  </div>
+
+</div>
+
+<div class="toast" id="toast">✅ クリップボードにコピーしました！</div>
+
+<script>
+  // === タグ入力 ===
+  const tags = [];
+  const tagInput = document.getElementById('tagInput');
+  const tagsContainer = document.getElementById('tagsContainer');
+
+  tagInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter' && this.value.trim()) {
+      e.preventDefault();
+      const tag = this.value.trim();
+      if (!tags.includes(tag)) {
+        tags.push(tag);
+        renderTags();
+      }
+      this.value = '';
+    }
+  });
+
+  tagsContainer.addEventListener('click', function() {
+    tagInput.focus();
+  });
+
+  function renderTags() {
+    const tagEls = tagsContainer.querySelectorAll('.tag');
+    tagEls.forEach(el => el.remove());
+    tags.forEach((tag, i) => {
+      const el = document.createElement('span');
+      el.className = 'tag';
+      el.innerHTML = `${tag} <span class="remove" onclick="removeTag(${i})">×</span>`;
+      tagsContainer.insertBefore(el, tagInput);
+    });
+  }
+
+  function removeTag(index) {
+    tags.splice(index, 1);
+    renderTags();
+  }
+
+  // === 画像プレビュー ===
+  const dropZone = document.getElementById('dropZone');
+  const imageInput = document.getElementById('imageInput');
+  const imageFiles = [];
+
+  dropZone.addEventListener('click', () => imageInput.click());
+  dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+  dropZone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    handleFiles(e.dataTransfer.files);
+  });
+  imageInput.addEventListener('change', (e) => handleFiles(e.target.files));
+
+  function handleFiles(files) {
+    Array.from(files).forEach(file => {
+      if (file.type.startsWith('image/')) {
+        imageFiles.push(file);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const div = document.createElement('div');
+          div.className = 'image-preview-item';
+          const idx = imageFiles.length - 1;
+          div.innerHTML = `<img src="${e.target.result}" alt="${file.name}"><button class="remove-img" onclick="removeImage(${idx}, this.parentElement)">×</button>`;
+          document.getElementById('imagePreviewList').appendChild(div);
+        };
+        reader.readAsDataURL(file);
+      }
+    });
+  }
+
+  function removeImage(index, element) {
+    imageFiles.splice(index, 1);
+    element.remove();
+  }
+
+  // === ショートコード挿入 ===
+  function insertShortcode(type) {
+    const textarea = document.getElementById('content');
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    let insert = '';
+
+    switch(type) {
+      case 'img':
+        insert = '{{< img src="/images/写真ファイル名.jpg" alt="写真の説明" caption="キャプション" >}}';
+        break;
+      case 'gallery':
+        insert = '{{< gallery >}}\n{{< img src="/images/photo1.jpg" alt="写真1" >}}\n{{< img src="/images/photo2.jpg" alt="写真2" >}}\n{{< /gallery >}}';
+        break;
+      case 'youtube':
+        insert = '{{< youtube id="動画IDをここに" title="動画タイトル" >}}';
+        break;
+      case 'amazon':
+        insert = '{{< amazon title="商品名" asin="商品コード" description="おすすめポイント" >}}';
+        break;
+      case 'h2':
+        insert = '\n## 見出しをここに\n';
+        break;
+      case 'bold':
+        insert = '**太字テキスト**';
+        break;
+      case 'link':
+        insert = '[リンクテキスト](https://URL)';
+        break;
+    }
+
+    textarea.value = textarea.value.substring(0, start) + insert + textarea.value.substring(end);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = start + insert.length;
+  }
+
+  // === 記事生成 ===
+  function generatePost() {
+    const title = document.getElementById('title').value || '無題の記事';
+    const category = document.getElementById('category').value;
+    const description = document.getElementById('description').value;
+    const content = document.getElementById('content').value;
+
+    const now = new Date();
+    const date = now.toISOString().split('T')[0];
+    const tagsYaml = tags.map(t => `"${t}"`).join(', ');
+
+    // 画像のショートコードリスト
+    let imageShortcodes = '';
+    if (imageFiles.length > 0) {
+      const slug = generateSlug(title);
+      if (imageFiles.length === 1) {
+        imageShortcodes = `\n{{< img src="/images/${slug}/${imageFiles[0].name}" alt="${title}" >}}\n`;
+      } else {
+        imageShortcodes = `\n{{< gallery >}}\n`;
+        imageFiles.forEach(f => {
+          imageShortcodes += `{{< img src="/images/${slug}/${f.name}" alt="${f.name}" >}}\n`;
+        });
+        imageShortcodes += `{{< /gallery >}}\n`;
+      }
+    }
+
+    const output = `---
+title: "${title}"
+date: ${date}
+draft: false
+categories: ["${category}"]
+tags: [${tagsYaml}]
+description: "${description}"
+image: ""
+---
+
+${content}
+${imageShortcodes}`;
+
+    document.getElementById('outputBox').textContent = output;
+    document.getElementById('outputPanel').classList.add('active');
+    document.getElementById('saveGuide').style.display = 'block';
+
+    const slug = generateSlug(title);
+    document.getElementById('suggestedFilename').textContent = slug + '.md';
+  }
+
+  function generateSlug(title) {
+    let slug = title.toLowerCase().replace(/[^a-zA-Z0-9\u3040-\u309F\u30A0-\u30FF\u4E00-\u9FFF]/g, '-').replace(/-+/g, '-').replace(/^-|-$/g, '');
+    if (!slug || slug === '-') {
+      slug = 'post-' + new Date().toISOString().slice(0,10);
+    }
+    return slug;
+  }
+
+  // === プレビュー ===
+  function togglePreview() {
+    generatePost();
+  }
+
+  // === コピー ===
+  function copyOutput() {
+    const text = document.getElementById('outputBox').textContent;
+    navigator.clipboard.writeText(text).then(() => {
+      const toast = document.getElementById('toast');
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2000);
+    });
+  }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+[{{ range $i, $p := .Pages }}{{ if $i }},{{ end }}
+  {
+    "title": "{{ $p.Title }}",
+    "date": "{{ $p.Date.Format "2006-01-02" }}",
+    "permalink": "{{ $p.Permalink }}",
+    "summary": "{{ $p.Summary | plainify | htmlUnescape | truncate 160 }}"
+  }{{ end }}
+]

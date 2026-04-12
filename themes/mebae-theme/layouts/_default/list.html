@@ -1,0 +1,49 @@
+{{ define "main" }}
+<div class="list-page">
+  <h1 class="list-title">{{ .Title }}</h1>
+  {{ with .Description }}
+  <p class="list-description">{{ . }}</p>
+  {{ end }}
+
+  <div class="posts-grid">
+    {{ $paginator := .Paginate .Pages }}
+    {{ if eq (len $paginator.Pages) 0 }}
+    <p style="text-align:center; color:#999; padding:40px 0; font-size:1.1rem;">📝 まだ記事がありません。お楽しみに！</p>
+    {{ end }}
+    {{ range $paginator.Pages }}
+    <article class="post-card">
+      {{ if .Params.image }}
+      <a href="{{ .Permalink }}" class="post-card-image">
+        <img src="{{ .Params.image }}" alt="{{ .Title }}" loading="lazy">
+      </a>
+      {{ end }}
+      <div class="post-card-content">
+        <div class="post-card-meta">
+          {{ with .Params.categories }}
+          {{ range first 1 . }}
+          <span class="post-category">{{ . }}</span>
+          {{ end }}
+          {{ end }}
+          <time datetime="{{ .Date.Format "2006-01-02" }}">{{ .Date.Format "2006年01月02日" }}</time>
+        </div>
+        <h3 class="post-card-title"><a href="{{ .Permalink }}">{{ .Title }}</a></h3>
+        <p class="post-card-excerpt">{{ .Summary | plainify | truncate 120 }}</p>
+        <a href="{{ .Permalink }}" class="read-more">続きを読む →</a>
+      </div>
+    </article>
+    {{ end }}
+  </div>
+
+  {{ if gt $paginator.TotalPages 1 }}
+  <nav class="pagination">
+    {{ if $paginator.HasPrev }}
+    <a href="{{ $paginator.Prev.URL }}" class="pagination-prev">← 前のページ</a>
+    {{ end }}
+    <span class="pagination-info">{{ $paginator.PageNumber }} / {{ $paginator.TotalPages }}</span>
+    {{ if $paginator.HasNext }}
+    <a href="{{ $paginator.Next.URL }}" class="pagination-next">次のページ →</a>
+    {{ end }}
+  </nav>
+  {{ end }}
+</div>
+{{ end }}

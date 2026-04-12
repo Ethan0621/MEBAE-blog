@@ -1,0 +1,16 @@
+{{/* YouTube 埋め込みショートコード */}}
+{{/* 使い方: youtube id="動画ID" title="動画タイトル" */}}
+
+{{ $id := .Get "id" }}
+{{ $title := .Get "title" | default "YouTube Video" }}
+
+<div class="video-container">
+  <iframe
+    src="https://www.youtube-nocookie.com/embed/{{ $id }}"
+    title="{{ $title }}"
+    frameborder="0"
+    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+    allowfullscreen
+    loading="lazy">
+  </iframe>
+</div>

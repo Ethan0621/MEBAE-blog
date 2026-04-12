@@ -8,6 +8,16 @@ paginate = 10
 enableRobotsTXT = true
 enableEmoji = true
 
+# Minify設定（JSのminifyを無効にしてインラインスクリプトの破損を防止）
+[minify]
+  [minify.tdewolff]
+    [minify.tdewolff.js]
+      keepVarNames = true
+      precision = 0
+      version = 2022
+    [minify.tdewolff.html]
+      keepEndTags = true
+
 # 日本語SEO対策
 [markup]
   [markup.goldmark]

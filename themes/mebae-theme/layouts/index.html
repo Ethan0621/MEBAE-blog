@@ -136,10 +136,11 @@
 
 {{/* カレンダーデータ: Hugo が全記事の日付をJSON化 */}}
 <script>
-const CALENDAR_MAP = {};
+var CALENDAR_MAP = {};
 {{ range (where .Site.RegularPages "Type" "posts") }}
 {{ if not .Params.draft }}
-(function(){ const d="{{ .Date.Format "2006-01-02" }}"; if(!CALENDAR_MAP[d]) CALENDAR_MAP[d]=[]; CALENDAR_MAP[d].push({slug:"{{ .File.BaseFileName }}", title:"{{ .Title }}"}); })();
+if(!CALENDAR_MAP["{{ .Date.Format "2006-01-02" }}"]) CALENDAR_MAP["{{ .Date.Format "2006-01-02" }}"] = [];
+CALENDAR_MAP["{{ .Date.Format "2006-01-02" }}"].push({"slug":"{{ .File.BaseFileName }}", "title":"{{ .Title }}"});
 {{ end }}
 {{ end }}
 

@@ -45,6 +45,36 @@
   </div>
 </section>
 
+{{/* カレンダー */}}
+<section class="blog-calendar" id="blogCalendar">
+  <div class="calendar-header">
+    <h3 id="calendarTitle">📅 2026年4月</h3>
+    <div class="calendar-nav">
+      <button onclick="changeMonth(-1)">◀ 前月</button>
+      <button onclick="changeMonth(0)">今月</button>
+      <button onclick="changeMonth(1)">翌月 ▶</button>
+    </div>
+  </div>
+  <div class="calendar-weekdays">
+    <span>日</span><span>月</span><span>火</span><span>水</span><span>木</span><span>金</span><span>土</span>
+  </div>
+  <div class="calendar-days" id="calendarDays"></div>
+</section>
+
+{{/* フォローセクション（ホーム） */}}
+<section class="follow-section">
+  <h3>🌸 ブログをフォローする</h3>
+  <p class="follow-desc">新しい記事が公開されたらお知らせします</p>
+  <div class="follower-badge">👥 フォロワー <span id="followerCount">0</span>人</div>
+  <form id="followForm" onsubmit="return false;">
+    <div class="follow-form-inner">
+      <input type="text" id="followName" placeholder="お名前（任意）">
+      <input type="email" id="followEmail" placeholder="メールアドレス" required>
+      <button type="submit">🌸 フォローする</button>
+    </div>
+  </form>
+</section>
+
 {{/* 最新記事 */}}
 <section class="latest-posts">
   <h2 class="section-title">✨ 最新の記事</h2>
@@ -97,8 +127,52 @@
        data-ad-slot="XXXXXXXXXX"
        data-ad-format="auto"
        data-full-width-responsive="true"></ins>
-  <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
-</div>
 {{ end }}
+
+{{/* カレンダーデータ: Hugo が全記事の日付をJSON化 */}}
+<script>
+const CALENDAR_MAP = {};
+{{ range (where .Site.RegularPages "Type" "posts") }}
+{{ if not .Params.draft }}
+(function(){ const d="{{ .Date.Format "2006-01-02" }}"; if(!CALENDAR_MAP[d]) CALENDAR_MAP[d]=[]; CALENDAR_MAP[d].push({slug:"{{ .File.BaseFileName }}", title:"{{ .Title }}"}); })();
+{{ end }}
+{{ end }}
+
+let calYear = new Date().getFullYear();
+let calMonth = new Date().getMonth();
+
+function renderCalendar() {
+  const title = document.getElementById('calendarTitle');
+  const container = document.getElementById('calendarDays');
+  if (!title || !container) return;
+  title.textContent = '📅 ' + calYear + '年' + (calMonth + 1) + '月';
+  const firstDay = new Date(calYear, calMonth, 1).getDay();
+  const daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+  const today = new Date();
+  let html = '';
+  for (let i = 0; i < firstDay; i++) html += '<div class="calendar-day other-month"></div>';
+  for (let day = 1; day <= daysInMonth; day++) {
+    const ds = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(day).padStart(2, '0');
+    const posts = CALENDAR_MAP[ds];
+    const isToday = today.getFullYear() === calYear && today.getMonth() === calMonth && today.getDate() === day;
+    let cls = 'calendar-day';
+    if (isToday) cls += ' today';
+    if (posts && posts.length > 0) {
+      cls += ' has-post';
+      const tooltip = posts.map(p => p.title).join(', ');
+      html += '<div class="' + cls + '" onclick="location.href=\'/posts/' + posts[0].slug + '/\'">' + day + '<span class="calendar-tooltip">' + tooltip.replace(/'/g, '&#39;') + '</span></div>';
+    } else {
+      html += '<div class="' + cls + '">' + day + '</div>';
+    }
+  }
+  container.innerHTML = html;
+}
+function changeMonth(delta) {
+  if (delta === 0) { calYear = new Date().getFullYear(); calMonth = new Date().getMonth(); }
+  else { calMonth += delta; if (calMonth < 0) { calMonth = 11; calYear--; } if (calMonth > 11) { calMonth = 0; calYear++; } }
+  renderCalendar();
+}
+document.addEventListener('DOMContentLoaded', renderCalendar);
+</script>
 
 {{ end }}

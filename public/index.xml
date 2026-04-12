@@ -2,59 +2,52 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>めばえのカリフォルニアブログ</title>
-    <link>http://localhost:1313/</link>
+    <link>https://mebae-california.com/</link>
     <description>Recent content on めばえのカリフォルニアブログ</description>
     <generator>Hugo</generator>
     <language>ja</language>
-    <lastBuildDate>Sat, 11 Apr 2026 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>【管理用】写真・動画の投稿ガイド</title>
-      <link>http://localhost:1313/posts/how-to-upload-images/</link>
-      <pubDate>Sat, 11 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/how-to-upload-images/</guid>
-      <description>&lt;h2 id=&#34;-写真のアップロード方法&#34;&gt;📸 写真のアップロード方法&lt;/h2&gt;&#xA;&lt;h3 id=&#34;方法1-cloudinaryおすすめブログ用&#34;&gt;方法1: Cloudinary（おすすめ・ブログ用）&lt;/h3&gt;&#xA;&lt;ol&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;Cloudinary にログイン&lt;/strong&gt;&lt;/p&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://cloudinary.com/&#34;&gt;https://cloudinary.com/&lt;/a&gt; にアクセス&lt;/li&gt;&#xA;&lt;li&gt;メールアドレスとパスワードでログイン&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;/li&gt;&#xA;&lt;li&gt;&#xA;&lt;p&gt;&lt;strong&gt;写真をアップロード&lt;/strong&gt;&lt;/p&gt;</description>
-    </item>
+    <lastBuildDate>Fri, 10 Apr 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="https://mebae-california.com/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>お昼ご飯♡3月21日〜3月31日</title>
-      <link>http://localhost:1313/posts/lunch-march-21-31-2026/</link>
+      <link>https://mebae-california.com/posts/lunch-march-21-31-2026/</link>
       <pubDate>Fri, 10 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/lunch-march-21-31-2026/</guid>
+      <guid>https://mebae-california.com/posts/lunch-march-21-31-2026/</guid>
       <description>&lt;p&gt;料理の記録 🍳&lt;/p&gt;&#xA;&lt;h2 id=&#34;321土-たらのムニエル風&#34;&gt;3/21(土) たらのムニエル風&lt;/h2&gt;&#xA;&lt;p&gt;たらのムニエル風・野菜サラダ、豚肉キャベツ椎茸えのき炒め（市販ソース）&lt;/p&gt;&#xA;&lt;p&gt;ブロッコリーの胡麻和え・オレンジ&lt;/p&gt;&#xA;&lt;p&gt;たらは淡白だけど美味しかったぁ👌&lt;/p&gt;</description>
     </item>
     <item>
       <title>空に広がるロケットの起動に興奮♡</title>
-      <link>http://localhost:1313/posts/spacex-rocket-excitement-2026/</link>
+      <link>https://mebae-california.com/posts/spacex-rocket-excitement-2026/</link>
       <pubDate>Tue, 07 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/spacex-rocket-excitement-2026/</guid>
+      <guid>https://mebae-california.com/posts/spacex-rocket-excitement-2026/</guid>
       <description>&lt;p&gt;🚀 SpaceXのロケット 🚀&lt;/p&gt;&#xA;&lt;p&gt;たまたま昨夜、散歩していると夫が『あそこ見てぇ❗』&lt;/p&gt;&#xA;&lt;p&gt;夫の指先方向へと目を向けると、飛行機雲より明るい雲で先端がどんどん動いている物体を発見。&lt;/p&gt;&#xA;&lt;p&gt;もしかして💡&lt;/p&gt;&#xA;&lt;p&gt;『あれがスペースエックス✨』&lt;/p&gt;</description>
     </item>
     <item>
       <title>以前購入した商品を探しにコストコへ♡</title>
-      <link>http://localhost:1313/posts/costco-shopping-march-2026/</link>
+      <link>https://mebae-california.com/posts/costco-shopping-march-2026/</link>
       <pubDate>Thu, 02 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/costco-shopping-march-2026/</guid>
-      <description>&lt;p&gt;朝イチに行っても人が多くなってきている我が地域のコストコ。相変わらず多いなぁ💦&lt;/p&gt;&#xA;&lt;p&gt;2月末に購入した商品が美味しかったので、もっと買っておきたいっと思い数日前にコストコへと買いに行きましたぁ。&lt;/p&gt;&#xA;&lt;p&gt;商品を探しながら店内をウロウロ…🛒🏃&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;figure class=&#34;blog-image &#34;&gt;&#xA;  &lt;img src=&#34;http://localhost:1313/images/costco-shopping-march-2026/costco-entrance.jpg&#34; alt=&#34;コストコの入り口&#34; loading=&#34;lazy&#34; width=&#34;800&#34;&gt;&#xA;  &#xA;  &lt;figcaption&gt;朝イチなのにもう混んでる😅&lt;/figcaption&gt;&#xA;  &#xA;&lt;/figure&gt;</description>
+      <guid>https://mebae-california.com/posts/costco-shopping-march-2026/</guid>
+      <description>&lt;p&gt;朝イチに行っても人が多くなってきている我が地域のコストコ。相変わらず多いなぁ💦&lt;/p&gt;&#xA;&lt;p&gt;2月末に購入した商品が美味しかったので、もっと買っておきたいっと思い数日前にコストコへと買いに行きましたぁ。&lt;/p&gt;&#xA;&lt;p&gt;商品を探しながら店内をウロウロ…🛒🏃&lt;/p&gt;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&#xA;&lt;figure class=&#34;blog-image &#34;&gt;&#xA;  &lt;img src=&#34;https://mebae-california.com/images/costco-shopping-march-2026/costco-entrance.jpg&#34; alt=&#34;コストコの入り口&#34; loading=&#34;lazy&#34; width=&#34;800&#34;&gt;&#xA;  &#xA;  &lt;figcaption&gt;朝イチなのにもう混んでる😅&lt;/figcaption&gt;&#xA;  &#xA;&lt;/figure&gt;</description>
     </item>
     <item>
       <title>ついにピーマンの季節がやってきたぁ♡日系スーパー</title>
-      <link>http://localhost:1313/posts/japanese-supermarket-piiman-2026/</link>
+      <link>https://mebae-california.com/posts/japanese-supermarket-piiman-2026/</link>
       <pubDate>Wed, 01 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/posts/japanese-supermarket-piiman-2026/</guid>
+      <guid>https://mebae-california.com/posts/japanese-supermarket-piiman-2026/</guid>
       <description>&lt;p&gt;昨夜の雨が上がり、すっきりとした青空。気持ちよく買い物へ出かけました🎵&lt;/p&gt;&#xA;&lt;p&gt;大きなTokyo Centralへ🚗💨&lt;/p&gt;</description>
     </item>
     <item>
       <title>プライバシーポリシー</title>
-      <link>http://localhost:1313/privacy/</link>
+      <link>https://mebae-california.com/privacy/</link>
       <pubDate>Wed, 01 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/privacy/</guid>
+      <guid>https://mebae-california.com/privacy/</guid>
       <description>&lt;h2 id=&#34;個人情報の利用目的&#34;&gt;個人情報の利用目的&lt;/h2&gt;&#xA;&lt;p&gt;当ブログでは、お問い合わせ等の際に、名前やメールアドレス等の個人情報をご登録いただく場合がございます。これらの個人情報は質問に対する回答や必要な情報を電子メールなどでご連絡する場合に利用させていただくものであり、個人情報をご提供いただく際の目的以外では利用いたしません。&lt;/p&gt;</description>
     </item>
     <item>
       <title>プロフィール</title>
-      <link>http://localhost:1313/about/</link>
+      <link>https://mebae-california.com/about/</link>
       <pubDate>Wed, 01 Apr 2026 00:00:00 +0000</pubDate>
-      <guid>http://localhost:1313/about/</guid>
+      <guid>https://mebae-california.com/about/</guid>
       <description>&lt;h2 id=&#34;めばえについて&#34;&gt;めばえについて&lt;/h2&gt;&#xA;&lt;p&gt;はじめまして！&lt;strong&gt;めばえ&lt;/strong&gt;です 🌸&lt;/p&gt;&#xA;&lt;p&gt;アメリカ・ロサンゼルスに在住5年目の日本人主婦です。&lt;/p&gt;&#xA;&lt;p&gt;何かと中途半端だった私ですが、一念発起で日記ブログを始めました。&lt;/p&gt;&#xA;&lt;p&gt;日々の思いやアメリカで感じたことを発信しています。&lt;/p&gt;</description>
     </item>
   </channel>

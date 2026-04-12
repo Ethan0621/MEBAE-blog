@@ -1,4 +1,5 @@
 {{ define "main" }}
+<meta name="post-slug" content="{{ .File.BaseFileName }}">
 <article class="single-post">
   {{/* 記事ヘッダー */}}
   <header class="post-header">
@@ -73,6 +74,28 @@
     {{ end }}
   </div>
   {{ end }}
+
+  {{/* いいねボタン */}}
+  <div class="like-section">
+    <button class="like-btn" id="likeBtn">
+      <span class="like-icon">♡</span>
+      <span class="like-count" id="likeCount">0</span>
+      <span class="like-label">いいね</span>
+    </button>
+  </div>
+
+  {{/* コメントセクション */}}
+  <section class="comments-section" id="commentsSection">
+    <h2>💬 コメント (<span id="commentCount">0</span>)</h2>
+    <form class="comment-form" id="commentForm">
+      <div class="comment-form-inner">
+        <input type="text" id="commentName" placeholder="ニックネーム" required maxlength="30">
+        <textarea id="commentMessage" placeholder="コメントを書く..." required maxlength="500" rows="3"></textarea>
+        <button type="submit" class="comment-submit">💬 コメントする</button>
+      </div>
+    </form>
+    <div class="comments-list" id="commentsList"></div>
+  </section>
 
   {{/* SNSシェアボタン */}}
   <div class="share-buttons">

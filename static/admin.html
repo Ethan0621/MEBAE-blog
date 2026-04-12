@@ -609,15 +609,15 @@
       <label>📸 写真アップロード</label>
       <div class="image-drop-zone" id="dropZone">
         📷 ここに写真をドラッグ＆ドロップ、またはクリックして選択
-        <input type="file" id="imageInput" multiple accept="image/*" style="display:none">
+        <input type="file" id="imageInput" multiple accept="image/*,.heic,.heif" style="display:none">
       </div>
       <div class="image-preview-grid" id="imagePreviewGrid"></div>
-      <p class="help-text">アップロードした写真をクリックすると本文に挿入されます。</p>
+      <p class="help-text">📌 アップロード後、サムネイルをクリック → 本文に自動挿入されます</p>
     </div>
     <div class="form-group">
       <label for="content">✍️ 本文</label>
       <div class="shortcode-bar">
-        <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真</button>
+        <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真を挿入</button>
         <button class="shortcode-btn" onclick="insertShortcode('gallery')">🖼️ ギャラリー</button>
         <button class="shortcode-btn" onclick="insertShortcode('youtube')">🎥 YouTube</button>
         <button class="shortcode-btn" onclick="insertShortcode('amazon')">🛒 Amazon</button>
@@ -1113,6 +1113,7 @@ function insertImagePath(imgPath) {
   const pos = textarea.selectionStart;
   textarea.value = textarea.value.substring(0, pos) + '\n' + shortcode + '\n' + textarea.value.substring(pos);
   textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = pos + shortcode.length + 2;
   showToast('📷 写真を本文に挿入しました', 'success');
 }
 
@@ -1147,8 +1148,21 @@ function insertShortcode(type) {
   let insert = '';
   const slug = document.getElementById('slug').value || 'folder';
   switch(type) {
-    case 'img': insert = '{{< img src="/images/' + slug + '/photo.jpg" alt="写真の説明" caption="" >}}'; break;
-    case 'gallery': insert = '{{< gallery >}}\n{{< img src="/images/photo1.jpg" alt="写真1" >}}\n{{< img src="/images/photo2.jpg" alt="写真2" >}}\n{{< /gallery >}}'; break;
+    case 'img':
+      // アップロード済み写真があれば選択ダイアログ、なければファイル選択
+      if (uploadedImages.length > 0) {
+        showImagePicker(false);
+      } else {
+        document.getElementById('imageInput').click();
+      }
+      return;
+    case 'gallery':
+      if (uploadedImages.length > 0) {
+        showImagePicker(true);
+      } else {
+        showToast('先に写真をアップロードしてください', 'error');
+      }
+      return;
     case 'youtube': insert = '{{< youtube id="動画IDをここに" title="動画タイトル" >}}'; break;
     case 'amazon': insert = '{{< amazon title="商品名" asin="商品コード" description="おすすめポイント" >}}'; break;
     case 'h2': insert = '\n## 見出しをここに\n'; break;
@@ -1157,6 +1171,76 @@ function insertShortcode(type) {
   }
   textarea.value = textarea.value.substring(0, start) + insert + textarea.value.substring(textarea.selectionEnd);
   textarea.focus();
+}
+
+// === 写真選択ダイアログ ===
+function showImagePicker(isGallery) {
+  // モーダルを作成
+  let modal = document.getElementById('imagePickerModal');
+  if (modal) modal.remove();
+  modal = document.createElement('div');
+  modal.id = 'imagePickerModal';
+  modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);z-index:10000;display:flex;align-items:center;justify-content:center;';
+  const selected = new Set();
+  const panel = document.createElement('div');
+  panel.style.cssText = 'background:#fff;border-radius:16px;padding:24px;max-width:600px;width:90%;max-height:80vh;overflow-y:auto;';
+  panel.innerHTML = '<h3 style="margin-bottom:12px;">' + (isGallery ? '🖼️ ギャラリーに入れる写真を選択' : '📷 挿入する写真を選択') + '</h3>' +
+    '<p style="color:#888;font-size:0.82rem;margin-bottom:16px;">' + (isGallery ? '複数選択できます。選んだら「挿入」を押してください。' : '写真をクリックすると本文に挿入されます。') + '</p>' +
+    '<div id="pickerGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px;"></div>' +
+    (isGallery ? '<div style="display:flex;gap:10px;justify-content:flex-end;"><button id="pickerCancel" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">キャンセル</button><button id="pickerInsert" style="padding:8px 20px;border:none;border-radius:8px;background:#e8a0bf;color:#fff;cursor:pointer;font-weight:bold;">挿入する</button></div>' :
+      '<div style="text-align:right;"><button id="pickerCancel" style="padding:8px 20px;border:1px solid #ccc;border-radius:8px;background:#fff;cursor:pointer;">閉じる</button></div>') +
+    '<p style="color:#aaa;font-size:0.78rem;margin-top:12px;text-align:center;">写真が足りない場合は閉じてから上のドロップエリアで追加アップロードしてください</p>';
+  modal.appendChild(panel);
+  document.body.appendChild(modal);
+
+  const grid = document.getElementById('pickerGrid');
+  uploadedImages.forEach((img, i) => {
+    const cell = document.createElement('div');
+    cell.style.cssText = 'position:relative;aspect-ratio:1;border-radius:8px;overflow:hidden;cursor:pointer;border:3px solid transparent;';
+    cell.innerHTML = '<img src="' + API_BASE + img.path + '" style="width:100%;height:100%;object-fit:cover;" alt="' + img.filename + '">' +
+      '<div style="position:absolute;top:4px;right:4px;width:24px;height:24px;border-radius:50%;background:rgba(255,255,255,0.8);display:none;align-items:center;justify-content:center;font-size:14px;" class="check-mark">✅</div>';
+
+    if (isGallery) {
+      cell.onclick = function() {
+        if (selected.has(i)) {
+          selected.delete(i);
+          cell.style.borderColor = 'transparent';
+          cell.querySelector('.check-mark').style.display = 'none';
+        } else {
+          selected.add(i);
+          cell.style.borderColor = '#e8a0bf';
+          cell.querySelector('.check-mark').style.display = 'flex';
+        }
+      };
+    } else {
+      cell.onclick = function() {
+        insertImagePath(img.path);
+        modal.remove();
+      };
+    }
+    grid.appendChild(cell);
+  });
+
+  document.getElementById('pickerCancel').onclick = () => modal.remove();
+  modal.onclick = (e) => { if (e.target === modal) modal.remove(); };
+
+  if (isGallery) {
+    document.getElementById('pickerInsert').onclick = function() {
+      if (selected.size === 0) { showToast('写真を選択してください', 'error'); return; }
+      const textarea = document.getElementById('content');
+      const pos = textarea.selectionStart;
+      let code = '\n{{< gallery >}}\n';
+      selected.forEach(i => {
+        const img = uploadedImages[i];
+        code += '{{< img src="' + img.path + '" alt="" >}}\n';
+      });
+      code += '{{< /gallery >}}\n';
+      textarea.value = textarea.value.substring(0, pos) + code + textarea.value.substring(pos);
+      textarea.focus();
+      modal.remove();
+      showToast('🖼️ ギャラリーを挿入しました（' + selected.size + '枚）', 'success');
+    };
+  }
 }
 
 // === ヘルパー ===

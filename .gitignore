@@ -1,0 +1,8 @@
+# Blog config (contains secrets)
+.blog-config.json
+
+# macOS
+.DS_Store
+
+# Node
+node_modules/

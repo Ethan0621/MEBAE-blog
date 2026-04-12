@@ -1,4 +1,10 @@
 {
-  "followers": [],
-  "count": 0
+  "followers": [
+    {
+      "name": "Ethan",
+      "email": "lalala.ethan.35@gmail.com",
+      "date": "2026-04-12T05:46:32.664Z"
+    }
+  ],
+  "count": 1
 }

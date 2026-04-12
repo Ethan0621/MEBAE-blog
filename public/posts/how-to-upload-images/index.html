@@ -98,6 +98,7 @@
   <main class="site-main">
     <div class="container">
       
+<meta name="post-slug" content="how-to-upload-images">
 <article class="single-post">
   
   <header class="post-header">
@@ -247,6 +248,28 @@
   
 
   
+  <div class="like-section">
+    <button class="like-btn" id="likeBtn">
+      <span class="like-icon">♡</span>
+      <span class="like-count" id="likeCount">0</span>
+      <span class="like-label">いいね</span>
+    </button>
+  </div>
+
+  
+  <section class="comments-section" id="commentsSection">
+    <h2>💬 コメント (<span id="commentCount">0</span>)</h2>
+    <form class="comment-form" id="commentForm">
+      <div class="comment-form-inner">
+        <input type="text" id="commentName" placeholder="ニックネーム" required maxlength="30">
+        <textarea id="commentMessage" placeholder="コメントを書く..." required maxlength="500" rows="3"></textarea>
+        <button type="submit" class="comment-submit">💬 コメントする</button>
+      </div>
+    </form>
+    <div class="comments-list" id="commentsList"></div>
+  </section>
+
+  
   <div class="share-buttons">
     <span class="share-label">シェアする:</span>
     <a href="https://twitter.com/intent/tweet?url=http%3a%2f%2flocalhost%3a1313%2fposts%2fhow-to-upload-images%2f&text=%E3%80%90%E7%AE%A1%E7%90%86%E7%94%A8%E3%80%91%E5%86%99%E7%9C%9F%E3%83%BB%E5%8B%95%E7%94%BB%E3%81%AE%E6%8A%95%E7%A8%BF%E3%82%AC%E3%82%A4%E3%83%89" target="_blank" rel="noopener" class="share-btn share-twitter" aria-label="Twitterでシェア">
@@ -322,5 +345,6 @@
   </footer>
 
   <script src="/js/main.js"></script>
+  <script src="/js/social.js"></script>
 </body>
 </html>

@@ -1,5 +1,10 @@
 {
-  "pageViews": {},
-  "dailyViews": {},
-  "totalViews": 0
+  "pageViews": {
+    "/": 1,
+    "/posts/lunch-march-21-31-2026/": 1
+  },
+  "dailyViews": {
+    "2026-04-12": 2
+  },
+  "totalViews": 2
 }

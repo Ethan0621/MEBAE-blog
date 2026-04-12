@@ -45,6 +45,9 @@
   </div>
 </section>
 
+{{/* カレンダー＆フォロー 横並びセクション */}}
+<div class="calendar-follow-row">
+
 {{/* カレンダー */}}
 <section class="blog-calendar" id="blogCalendar">
   <div class="calendar-header">
@@ -74,6 +77,8 @@
     </div>
   </form>
 </section>
+
+</div>
 
 {{/* 最新記事 */}}
 <section class="latest-posts">
@@ -159,8 +164,8 @@ function renderCalendar() {
     if (isToday) cls += ' today';
     if (posts && posts.length > 0) {
       cls += ' has-post';
-      const tooltip = posts.map(p => p.title).join(', ');
-      html += '<div class="' + cls + '" onclick="location.href=\'/posts/' + posts[0].slug + '/\'">' + day + '<span class="calendar-tooltip">' + tooltip.replace(/'/g, '&#39;') + '</span></div>';
+      const tooltip = posts.map(function(p){ return p.title; }).join('\n');
+      html += '<div class="' + cls + '" title="' + tooltip.replace(/"/g, '&quot;') + '" onclick="location.href=\'/posts/' + posts[0].slug + '/\'">' + day + '</div>';
     } else {
       html += '<div class="' + cls + '">' + day + '</div>';
     }

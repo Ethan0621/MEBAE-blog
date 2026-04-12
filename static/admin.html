@@ -413,9 +413,69 @@
       font-weight: bold;
     }
     .tab-bar button:hover { color: #e8917a; }
+
+    /* ログイン画面 */
+    .login-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: #fefcfa;
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .login-box {
+      background: white;
+      border: 2px solid #ede7e0;
+      border-radius: 16px;
+      padding: 40px 36px;
+      text-align: center;
+      max-width: 360px;
+      width: 90%;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    }
+    .login-box h2 { font-size: 1.2rem; margin-bottom: 8px; }
+    .login-box p { font-size: 0.85rem; color: #999; margin-bottom: 20px; }
+    .login-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid #ede7e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: center;
+      margin-bottom: 14px;
+      font-family: inherit;
+    }
+    .login-box input:focus { outline: none; border-color: #e8917a; }
+    .login-box button {
+      width: 100%;
+      padding: 12px;
+      background: #e8917a;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .login-box button:hover { background: #d4705a; }
+    .login-error { color: #e74c3c; font-size: 0.85rem; margin-top: 10px; display: none; }
   </style>
 </head>
 <body>
+
+<!-- ログイン画面 -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-box">
+    <h2>🌸 めばえブログ</h2>
+    <p>管理画面にログイン</p>
+    <form onsubmit="return doLogin()">
+      <input type="password" id="loginPassword" placeholder="パスワードを入力" autofocus>
+      <button type="submit">ログイン</button>
+    </form>
+    <p class="login-error" id="loginError">パスワードが違います</p>
+  </div>
+</div>
 
 <header class="admin-header">
   <h1>🌸 めばえブログ 管理画面</h1>
@@ -423,6 +483,7 @@
     <span id="serverStatus"><span class="status-dot ok"></span> 接続中</span>
     <button onclick="showList()">📋 記事一覧</button>
     <button onclick="showAnalytics()">📊 アクセス解析</button>
+    <button onclick="showHelp()">❓ 使い方ガイド</button>
     <a href="http://localhost:1313/" target="_blank">👀 サイトプレビュー</a>
     <a href="https://mebae-california.com" target="_blank">🌐 公開サイト</a>
   </div>
@@ -584,18 +645,125 @@
     </div>
   </div>
 
+  <!-- ===== 使い方ガイド画面 ===== -->
+  <div class="view" id="viewHelp">
+    <h2 style="margin-bottom:20px;">❓ 写真・動画の投稿ガイド</h2>
+
+    <div class="analytics-section">
+      <h3>📸 写真のアップロード方法</h3>
+      <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
+        <p><strong>ステップ１：</strong>記事の編集画面を開く</p>
+        <p><strong>ステップ２：</strong>「📸 写真アップロード」のエリアに写真をドラッグ＆ドロップ、またはクリックして選択</p>
+        <p><strong>ステップ３：</strong>アップロードされた写真のサムネイルをクリックすると、本文に自動挿入されます</p>
+        <div style="background:#f8f4f0;padding:12px 16px;border-radius:8px;margin:12px 0;font-family:monospace;font-size:0.82rem;">
+          {{&lt; img src="/images/フォルダ名/photo.jpg" alt="写真の説明" caption="キャプション" &gt;}}
+        </div>
+        <p style="color:#999;font-size:0.82rem;">💡 iPhoneの写真アプリから直接ドラッグ＆ドロップできます</p>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h3>🖼️ 複数の写真をギャラリー表示</h3>
+      <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
+        <p>本文に写真を続けて挿入すれば、自動的にきれいに並びます。</p>
+        <p>ギャラリーにしたい場合は、以下のように囲みます：</p>
+        <div style="background:#f8f4f0;padding:12px 16px;border-radius:8px;margin:12px 0;font-family:monospace;font-size:0.82rem;">
+          {{&lt; gallery &gt;}}<br>
+          {{&lt; img src="/images/photo1.jpg" alt="写真1" &gt;}}<br>
+          {{&lt; img src="/images/photo2.jpg" alt="写真2" &gt;}}<br>
+          {{&lt; img src="/images/photo3.jpg" alt="写真3" &gt;}}<br>
+          {{&lt; /gallery &gt;}}
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h3>🎥 YouTubeの動画を貼り付ける方法</h3>
+      <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
+        <p><strong>ステップ１：</strong>YouTubeに動画をアップロード（iPhoneアプリからでもOK）</p>
+        <p><strong>ステップ２：</strong>動画のURL <code>https://youtu.be/<strong>ABC123</strong></code> の太字部分（動画ID）をコピー</p>
+        <p><strong>ステップ３：</strong>編集画面の「🎥 YouTube」ボタンをクリック、または本文に以下を入力：</p>
+        <div style="background:#f8f4f0;padding:12px 16px;border-radius:8px;margin:12px 0;font-family:monospace;font-size:0.82rem;">
+          {{&lt; youtube id="ABC123" title="動画タイトル" &gt;}}
+        </div>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h3>✍️ 記事を書くときのコツ</h3>
+      <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
+        <table style="width:100%;border-collapse:collapse;margin:8px 0;">
+          <tr style="border-bottom:1px solid #ede7e0;">
+            <td style="padding:8px;font-weight:bold;">見出し</td>
+            <td style="padding:8px;font-family:monospace;">## 見出しテキスト</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ede7e0;">
+            <td style="padding:8px;font-weight:bold;">太字</td>
+            <td style="padding:8px;font-family:monospace;">**太字テキスト**</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ede7e0;">
+            <td style="padding:8px;font-weight:bold;">リスト</td>
+            <td style="padding:8px;font-family:monospace;">- 項目1<br>- 項目2</td>
+          </tr>
+          <tr style="border-bottom:1px solid #ede7e0;">
+            <td style="padding:8px;font-weight:bold;">リンク</td>
+            <td style="padding:8px;font-family:monospace;">[テキスト](https://URL)</td>
+          </tr>
+          <tr>
+            <td style="padding:8px;font-weight:bold;">Amazon</td>
+            <td style="padding:8px;font-family:monospace;">{{&lt; amazon title="商品名" asin="コード" &gt;}}</td>
+          </tr>
+        </table>
+        <p style="color:#999;font-size:0.82rem;">💡 編集画面の上部にあるショートコードボタンを使うと、クリックだけで挿入できます！</p>
+      </div>
+    </div>
+
+    <div class="analytics-section">
+      <h3>🚀 記事を公開する手順</h3>
+      <div style="font-size:0.9rem;line-height:1.8;color:#3d3d3d;">
+        <p><strong>①</strong> 記事を書いて「💾 保存する」をクリック</p>
+        <p><strong>②</strong> 「👀 サイトプレビュー」で確認</p>
+        <p><strong>③</strong> OKなら「🚀 サイトに公開する」をクリック</p>
+        <p style="color:#999;font-size:0.82rem;">💡 「📋 下書きとして保存」にチェックを入れると公開されません</p>
+      </div>
+    </div>
+  </div>
+
 </div>
 
 <script>
 const API_BASE = 'http://localhost:3001';
+const ADMIN_PASS = 'mebae2026';
 let currentSlug = null;
 let tags = [];
 let uploadedImages = [];
 
-document.addEventListener('DOMContentLoaded', () => {
+// === ログイン ===
+function doLogin() {
+  const pw = document.getElementById('loginPassword').value;
+  if (pw === ADMIN_PASS) {
+    sessionStorage.setItem('mebae_admin', 'ok');
+    document.getElementById('loginOverlay').style.display = 'none';
+    initAdmin();
+  } else {
+    document.getElementById('loginError').style.display = 'block';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginPassword').focus();
+  }
+  return false;
+}
+
+function initAdmin() {
   loadPosts();
   checkServerStatus();
   document.getElementById('date').value = new Date().toISOString().split('T')[0];
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('mebae_admin') === 'ok') {
+    document.getElementById('loginOverlay').style.display = 'none';
+    initAdmin();
+  }
 });
 
 async function checkServerStatus() {
@@ -925,6 +1093,11 @@ function hideLoading() {
 function showAnalytics() {
   showView('viewAnalytics');
   loadAnalytics();
+}
+
+// === 使い方ガイド ===
+function showHelp() {
+  showView('viewHelp');
 }
 
 async function loadAnalytics() {

@@ -113,6 +113,149 @@
     }
     input:focus, textarea:focus, select:focus { outline: none; border-color: #e8917a; }
     textarea { min-height: 350px; resize: vertical; }
+    /* WYSIWYG リッチテキストエディタ */
+    .rich-editor {
+      width: 100%;
+      min-height: 400px;
+      padding: 16px 18px;
+      border: 2px solid #ede7e0;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: inherit;
+      line-height: 1.8;
+      background: white;
+      outline: none;
+      overflow-y: auto;
+      transition: border-color 0.3s;
+      word-wrap: break-word;
+      overflow-wrap: break-word;
+    }
+    .rich-editor:focus { border-color: #e8917a; }
+    .rich-editor:empty::before {
+      content: 'ここに記事の本文を書いてください...\A\A💡 上のボタンから見出し・写真・YouTubeなどを挿入できます！';
+      white-space: pre-wrap;
+      color: #bbb;
+      pointer-events: none;
+    }
+    .rich-editor h1, .rich-editor h2, .rich-editor h3, .rich-editor h4, .rich-editor h5 {
+      margin: 0.8em 0 0.4em;
+      color: #5a4a42;
+    }
+    .rich-editor h1 { font-size: 1.6rem; border-bottom: 2px solid #e8917a; padding-bottom: 4px; }
+    .rich-editor h2 {
+      display: block;
+      width: fit-content;
+      font-size: 1.35rem;
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #fdf0ec, #fff5f0);
+      border-radius: 6px;
+      border-left: 5px solid #e8917a;
+    }
+    .rich-editor h3 {
+      display: block;
+      width: fit-content;
+      font-size: 1.15rem;
+      padding: 8px 14px;
+      background: #fdf0ec;
+      border-radius: 6px;
+      border-left: 4px solid #e8917a;
+    }
+    .rich-editor h4 {
+      display: block;
+      width: fit-content;
+      font-size: 1.05rem;
+      padding: 6px 12px;
+      background: #fdf8f6;
+      border-radius: 6px;
+      border-bottom: 2px dotted #fdf0ec;
+    }
+    .rich-editor h5 { font-size: 0.95rem; }
+    .rich-editor blockquote {
+      border-left: 4px solid #e8917a;
+      margin: 0.5em 0;
+      padding: 8px 16px;
+      background: #fdf8f6;
+      color: #666;
+    }
+    .rich-editor hr {
+      border: none;
+      border-top: 2px dashed #ede7e0;
+      margin: 1em 0;
+    }
+    .rich-editor ul, .rich-editor ol {
+      padding-left: 24px;
+      margin: 0.4em 0;
+    }
+    .rich-editor img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin: 8px 0;
+      display: block;
+    }
+    .rich-editor .editor-img-wrapper {
+      display: inline-block;
+      position: relative;
+      margin: 8px 0;
+    }
+    .rich-editor .editor-img-wrapper img {
+      margin: 0;
+    }
+    .rich-editor .editor-img-caption {
+      font-size: 0.8rem;
+      color: #999;
+      text-align: center;
+      display: block;
+    }
+    .rich-editor .editor-shortcode {
+      display: inline-block;
+      background: #e8f5f1;
+      border: 1px solid #7ab8a8;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-size: 0.8rem;
+      color: #3d6d5d;
+      margin: 4px 0;
+      cursor: default;
+    }
+    .rich-editor a { color: #2980b9; text-decoration: underline; }
+    .toolbar-divider {
+      display: inline-block;
+      width: 1px;
+      height: 20px;
+      background: #ddd;
+      vertical-align: middle;
+      margin: 0 4px;
+    }
+    .shortcode-btn.active {
+      background: #7ab8a8;
+      color: white;
+    }
+    /* ソースモード切替 */
+    .editor-mode-toggle {
+      display: flex;
+      gap: 0;
+      margin-bottom: 8px;
+    }
+    .editor-mode-toggle button {
+      padding: 6px 16px;
+      border: 1px solid #ddd;
+      background: #f8f8f8;
+      font-size: 0.8rem;
+      cursor: pointer;
+      color: #666;
+    }
+    .editor-mode-toggle button:first-child {
+      border-radius: 6px 0 0 6px;
+    }
+    .editor-mode-toggle button:last-child {
+      border-radius: 0 6px 6px 0;
+    }
+    .editor-mode-toggle button.active {
+      background: #e8917a;
+      color: white;
+      border-color: #e8917a;
+    }
     .tags-input {
       display: flex;
       flex-wrap: wrap;
@@ -241,6 +384,17 @@
       gap: 6px;
       flex-wrap: wrap;
       margin-bottom: 8px;
+    }
+    .editor-toolbar {
+      position: sticky;
+      top: 50px;
+      z-index: 40;
+      background: #fefcfa;
+      padding: 8px 0 4px;
+      border-bottom: 1px solid #ede7e0;
+      margin: 0 -2px;
+      padding-left: 2px;
+      padding-right: 2px;
     }
     .shortcode-btn {
       padding: 5px 11px;
@@ -708,6 +862,7 @@
     </div>
     <div class="form-group">
       <label for="content">✍️ 本文</label>
+      <div class="editor-toolbar">
       <div class="shortcode-bar" style="border-bottom:1px solid #ede7e0;padding-bottom:6px;margin-bottom:6px;">
         <button class="shortcode-btn" onclick="insertShortcode('img')">📷 写真</button>
         <button class="shortcode-btn" onclick="insertShortcode('gallery')">🖼️ ギャラリー</button>
@@ -716,13 +871,13 @@
       </div>
       <div class="shortcode-bar" style="border-bottom:1px solid #ede7e0;padding-bottom:6px;margin-bottom:6px;">
         <button class="shortcode-btn" onclick="insertShortcode('heading')">📌 見出し</button>
-        <button class="shortcode-btn" onclick="insertShortcode('bold')"><b>B</b></button>
-        <button class="shortcode-btn" onclick="insertShortcode('italic')"><i>I</i></button>
+        <button class="shortcode-btn" onclick="insertShortcode('bold')"><b>B</b> 太字</button>
+        <button class="shortcode-btn" onclick="insertShortcode('italic')"><i>I</i> 斜体</button>
         <button class="shortcode-btn" onclick="insertShortcode('fontSize')" id="fontSizeBtn">🔤 文字サイズ</button>
         <button class="shortcode-btn" onclick="insertShortcode('color')">🎨 文字色</button>
         <button class="shortcode-btn" onclick="insertShortcode('link')">🔗 リンク</button>
       </div>
-      <div class="shortcode-bar">
+      <div class="shortcode-bar" style="border-bottom:1px solid #ede7e0;padding-bottom:6px;margin-bottom:6px;">
         <button class="shortcode-btn" onclick="insertShortcode('alignLeft')" title="左寄せ">◀ 左</button>
         <button class="shortcode-btn" onclick="insertShortcode('alignCenter')" title="中央">▣ 中央</button>
         <button class="shortcode-btn" onclick="insertShortcode('alignRight')" title="右寄せ">▶ 右</button>
@@ -732,7 +887,13 @@
         <button class="shortcode-btn" onclick="insertShortcode('hr')">― 区切り線</button>
         <button class="shortcode-btn" onclick="showEmojiPicker()">😀 絵文字</button>
       </div>
-      <textarea id="content" placeholder="ここに記事の本文を書いてください...&#10;&#10;💡 ヒント:&#10;## で見出し&#10;**太字** で太字&#10;- でリスト&#10;&#10;上のボタンから写真やYouTubeも挿入できます！"></textarea>
+      <div class="editor-mode-toggle">
+        <button class="active" onclick="switchEditorMode('visual', this)">👁️ 見たまま編集</button>
+        <button onclick="switchEditorMode('source', this)">📝 ソース編集</button>
+      </div>
+      </div><!-- /editor-toolbar -->
+      <div id="richEditor" class="rich-editor" contenteditable="true"></div>
+      <textarea id="content" style="display:none;" placeholder="ここに記事の本文を書いてください..."></textarea>
     </div>
     <div class="form-group">
       <label><input type="checkbox" id="isDraft"> 📋 下書きとして保存（公開しない）</label>
@@ -995,7 +1156,307 @@ const ADMIN_PASS = 'mebae2026';
 let currentSlug = null;
 let tags = [];
 let uploadedImages = [];
-let savedCursorPos = null; // ダイアログ表示前のカーソル位置を保存
+let savedSelection = null; // ダイアログ表示前の選択範囲を保存
+let editorMode = 'visual'; // 'visual' or 'source'
+
+// === エディタモード切替 ===
+function switchEditorMode(mode, btn) {
+  const richEditor = document.getElementById('richEditor');
+  const textarea = document.getElementById('content');
+  const toggleBtns = document.querySelectorAll('.editor-mode-toggle button');
+  toggleBtns.forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  if (mode === 'source') {
+    // ビジュアル→ソース: HTMLをMarkdownに変換してtextareaに
+    syncVisualToSource();
+    richEditor.style.display = 'none';
+    textarea.style.display = 'block';
+    textarea.style.minHeight = '400px';
+    textarea.style.resize = 'vertical';
+    editorMode = 'source';
+  } else {
+    // ソース→ビジュアル: MarkdownをHTMLに変換してrichEditorに
+    syncSourceToVisual();
+    textarea.style.display = 'none';
+    richEditor.style.display = 'block';
+    editorMode = 'visual';
+  }
+}
+
+// MarkdownをHTMLに変換（エディタ用）
+function markdownToHtml(md) {
+  if (!md) return '';
+  let html = md;
+
+  // Hugo shortcodesを特殊表示に変換
+  html = html.replace(/\{\{<\s*img\s+src="([^"]*)"([^>]*?)>\}\}/g, function(match, src, rest) {
+    const altMatch = rest.match(/alt="([^"]*)"/);
+    const captionMatch = rest.match(/caption="([^"]*)"/);
+    const widthMatch = rest.match(/width="([^"]*)"/);
+    const alt = altMatch ? altMatch[1] : '';
+    const caption = captionMatch ? captionMatch[1] : '';
+    const width = widthMatch ? widthMatch[1] : '800';
+    const imgSrc = src.startsWith('/images/') ? API_BASE + src : src;
+    const w = width === '100%' ? '100%' : width + 'px';
+    let imgHtml = '<span class="editor-img-wrapper" contenteditable="false" data-shortcode=\'' + match.replace(/'/g, '&#39;') + '\' style="max-width:' + w + '">';
+    imgHtml += '<img src="' + imgSrc + '" alt="' + alt + '" style="max-width:' + w + ';width:100%;">';
+    if (caption) imgHtml += '<span class="editor-img-caption">' + caption + '</span>';
+    imgHtml += '</span>';
+    return imgHtml;
+  });
+
+  // Gallery shortcode
+  html = html.replace(/\{\{<\s*gallery\s*>\}\}([\s\S]*?)\{\{<\s*\/gallery\s*>\}\}/g, function(match, inner) {
+    return '<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + match.replace(/'/g, '&#39;') + '\'>🖼️ ギャラリー</span>';
+  });
+
+  // YouTube shortcode
+  html = html.replace(/\{\{<\s*youtube\s+[^>]*>\}\}/g, function(match) {
+    const idMatch = match.match(/id="([^"]*)"/);
+    const titleMatch = match.match(/title="([^"]*)"/);
+    return '<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + match.replace(/'/g, '&#39;') + '\'>🎥 YouTube: ' + (titleMatch ? titleMatch[1] : (idMatch ? idMatch[1] : '')) + '</span>';
+  });
+
+  // Amazon shortcode
+  html = html.replace(/\{\{<\s*amazon\s+[^>]*>\}\}/g, function(match) {
+    const titleMatch = match.match(/title="([^"]*)"/);
+    return '<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + match.replace(/'/g, '&#39;') + '\'>🛒 Amazon: ' + (titleMatch ? titleMatch[1] : '') + '</span>';
+  });
+
+  // 見出し（Markdown → HTML）
+  html = html.replace(/^##### (.+)$/gm, '<h5>$1</h5>');
+  html = html.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  html = html.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  html = html.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  html = html.replace(/^# (.+)$/gm, '<h1>$1</h1>');
+
+  // 太字・斜体
+  html = html.replace(/\*\*\*(.+?)\*\*\*/g, '<b><i>$1</i></b>');
+  html = html.replace(/\*\*(.+?)\*\*/g, '<b>$1</b>');
+  html = html.replace(/(?<!\*)\*([^*]+?)\*(?!\*)/g, '<i>$1</i>');
+
+  // リンク
+  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2">$1</a>');
+
+  // 引用
+  html = html.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+
+  // 区切り線
+  html = html.replace(/^---$/gm, '<hr>');
+
+  // リスト処理（連続行をul/olにまとめる）
+  html = html.replace(/(^- .+$(\n|$))+/gm, function(block) {
+    const items = block.trim().split('\n').map(l => '<li>' + l.replace(/^- /, '') + '</li>').join('');
+    return '<ul>' + items + '</ul>';
+  });
+  html = html.replace(/(^\d+\. .+$(\n|$))+/gm, function(block) {
+    const items = block.trim().split('\n').map(l => '<li>' + l.replace(/^\d+\.\s*/, '') + '</li>').join('');
+    return '<ol>' + items + '</ol>';
+  });
+
+  // 段落（空行区切り） - 残りのテキスト行を<br>で結合
+  // すでにHTMLタグで始まる行はそのまま
+  const lines = html.split('\n');
+  let result = '';
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    if (line.match(/^<(h[1-5]|ul|ol|blockquote|hr|div|span|p)/)) {
+      result += line + '\n';
+    } else if (line.trim() === '') {
+      result += '<br>';
+    } else {
+      result += line + '<br>';
+    }
+  }
+  return result;
+}
+
+// HTMLをMarkdownに変換（保存用）
+function htmlToMarkdown(html) {
+  if (!html) return '';
+  let md = html;
+
+  // shortcodeを復元
+  md = md.replace(/<span\s+class="editor-shortcode"[^>]*data-shortcode='([^']*)'[^>]*>[^<]*<\/span>/g, function(m, sc) {
+    return sc.replace(/&#39;/g, "'");
+  });
+  md = md.replace(/<span\s+class="editor-img-wrapper"[^>]*data-shortcode='([^']*)'[^>]*>[\s\S]*?<\/span>/g, function(m, sc) {
+    return sc.replace(/&#39;/g, "'");
+  });
+
+  // divタグ（alignment）
+  md = md.replace(/<div style="text-align:\s*(left|center|right)">([\s\S]*?)<\/div>/gi, function(m, align, content) {
+    return '<div style="text-align:' + align + '">\n\n' + content.trim() + '\n\n</div>';
+  });
+
+  // 見出し
+  md = md.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1');
+  md = md.replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1');
+  md = md.replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1');
+  md = md.replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1');
+  md = md.replace(/<h5[^>]*>(.*?)<\/h5>/gi, '##### $1');
+
+  // 太字・斜体
+  md = md.replace(/<b><i>(.*?)<\/i><\/b>/gi, '***$1***');
+  md = md.replace(/<strong><em>(.*?)<\/em><\/strong>/gi, '***$1***');
+  md = md.replace(/<b>(.*?)<\/b>/gi, '**$1**');
+  md = md.replace(/<strong>(.*?)<\/strong>/gi, '**$1**');
+  md = md.replace(/<i>(.*?)<\/i>/gi, '*$1*');
+  md = md.replace(/<em>(.*?)<\/em>/gi, '*$1*');
+
+  // リンク
+  md = md.replace(/<a\s+href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)');
+
+  // リスト
+  md = md.replace(/<ul>([\s\S]*?)<\/ul>/gi, function(m, content) {
+    return content.replace(/<li>(.*?)<\/li>/gi, '- $1').trim();
+  });
+  md = md.replace(/<ol>([\s\S]*?)<\/ol>/gi, function(m, content) {
+    let i = 0;
+    return content.replace(/<li>(.*?)<\/li>/gi, function(m, text) {
+      i++;
+      return i + '. ' + text;
+    }).trim();
+  });
+
+  // 引用
+  md = md.replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gi, '> $1');
+
+  // 区切り線
+  md = md.replace(/<hr\s*\/?>/gi, '\n---\n');
+
+  // span（font-size, color）はそのまま残す（Hugo rawHTMLで表示される）
+  // ただし不要なspan属性は除去しない
+
+  // <br>を改行に
+  md = md.replace(/<br\s*\/?>/gi, '\n');
+
+  // <div>と</div>
+  md = md.replace(/<\/?div[^>]*>/gi, function(tag) {
+    if (tag.match(/style="text-align/i)) return tag; // alignment divは残す
+    return '\n';
+  });
+
+  // <p>タグ
+  md = md.replace(/<p[^>]*>/gi, '');
+  md = md.replace(/<\/p>/gi, '\n');
+
+  // 残りのHTMLタグでspanのstyle付きは残す
+  // &nbsp;
+  md = md.replace(/&nbsp;/g, ' ');
+
+  // 連続改行を整理
+  md = md.replace(/\n{3,}/g, '\n\n');
+  return md.trim();
+}
+
+// ビジュアルエディタ→ソーステキスト同期
+function syncVisualToSource() {
+  const richEditor = document.getElementById('richEditor');
+  const textarea = document.getElementById('content');
+  textarea.value = htmlToMarkdown(richEditor.innerHTML);
+}
+
+// ソーステキスト→ビジュアルエディタ同期
+function syncSourceToVisual() {
+  const richEditor = document.getElementById('richEditor');
+  const textarea = document.getElementById('content');
+  richEditor.innerHTML = markdownToHtml(textarea.value);
+}
+
+// エディタの内容取得（保存時）
+function getEditorContent() {
+  if (editorMode === 'visual') {
+    syncVisualToSource();
+  }
+  return document.getElementById('content').value;
+}
+
+// エディタに内容をセット（読み込み時）
+function setEditorContent(markdown) {
+  document.getElementById('content').value = markdown;
+  if (editorMode === 'visual') {
+    syncSourceToVisual();
+  }
+}
+
+// リッチエディタに選択範囲を保存
+function saveEditorSelection() {
+  const sel = window.getSelection();
+  if (sel.rangeCount > 0) {
+    savedSelection = sel.getRangeAt(0).cloneRange();
+  }
+}
+
+// リッチエディタの選択範囲を復元
+function restoreEditorSelection() {
+  if (savedSelection) {
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(savedSelection);
+  }
+}
+
+// リッチエディタにHTMLを挿入（カーソル位置維持、次行を巻き込まない）
+function insertHtmlAtCursor(html) {
+  const richEditor = document.getElementById('richEditor');
+  richEditor.focus();
+
+  const sel = window.getSelection();
+  let range;
+
+  if (savedSelection) {
+    sel.removeAllRanges();
+    sel.addRange(savedSelection);
+    range = savedSelection;
+  } else if (sel.rangeCount > 0) {
+    range = sel.getRangeAt(0);
+  } else {
+    // カーソルが無ければ末尾に配置
+    range = document.createRange();
+    range.selectNodeContents(richEditor);
+    range.collapse(false);
+    sel.removeAllRanges();
+    sel.addRange(range);
+  }
+
+  // 選択範囲がある場合は先に削除してコラプス
+  if (!range.collapsed) {
+    range.deleteContents();
+  }
+
+  // 一時要素にHTMLをパースして挿入
+  const temp = document.createElement('div');
+  temp.innerHTML = html;
+  const frag = document.createDocumentFragment();
+  let lastNode = null;
+  while (temp.firstChild) {
+    lastNode = temp.firstChild;
+    frag.appendChild(lastNode);
+  }
+  range.insertNode(frag);
+
+  // カーソルを挿入末尾に移動
+  if (lastNode) {
+    const newRange = document.createRange();
+    newRange.setStartAfter(lastNode);
+    newRange.collapse(true);
+    sel.removeAllRanges();
+    sel.addRange(newRange);
+  }
+
+  savedSelection = null;
+}
+
+// ソースモードでカーソル位置にテキスト挿入
+function insertTextAtCursor(text) {
+  const textarea = document.getElementById('content');
+  const start = textarea.selectionStart;
+  textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(start);
+  textarea.focus();
+  textarea.selectionStart = textarea.selectionEnd = start + text.length;
+}
 
 // === ログイン ===
 function doLogin() {
@@ -1016,6 +1477,57 @@ function initAdmin() {
   loadPosts();
   checkServerStatus();
   document.getElementById('date').value = new Date().toISOString().split('T')[0];
+
+  // リッチエディタのイベント設定
+  const richEditor = document.getElementById('richEditor');
+  if (richEditor) {
+    // 日本語IME変換中フラグ
+    let isComposing = false;
+    richEditor.addEventListener('compositionstart', function() {
+      isComposing = true;
+    });
+    richEditor.addEventListener('compositionend', function() {
+      isComposing = false;
+    });
+
+    // Enterキー処理（IME変換中は無視）
+    richEditor.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        // IME変換中（日本語変換確定時）は何もしない
+        if (isComposing || e.isComposing) return;
+
+        // カーソルがリスト（ul/ol）内にいるか判定
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+          let node = sel.anchorNode;
+          let inList = false;
+          while (node && node !== richEditor) {
+            if (node.nodeName === 'UL' || node.nodeName === 'OL') {
+              inList = true;
+              break;
+            }
+            node = node.parentNode;
+          }
+          if (inList) {
+            // リスト内ではブラウザのデフォルト動作（新しいli追加）を使う
+            return;
+          }
+        }
+        // リスト外では<br>を挿入（<div>挿入を防ぐ）
+        e.preventDefault();
+        document.execCommand('insertLineBreak');
+      }
+    });
+    // フォーカスアウト時にソースを同期
+    richEditor.addEventListener('blur', function() {
+      syncVisualToSource();
+    });
+    // ペースト時にプレーンテキストとして処理（余計な書式を除く）
+    richEditor.addEventListener('paste', function(e) {
+      // HTMLペーストは許可（画像URLなども含む可能性）
+      // ただし不要なタグは除去
+    });
+  }
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1100,7 +1612,7 @@ async function loadPost(slug) {
     document.getElementById('slug').value = slug;
     document.getElementById('date').value = post.date || '';
     document.getElementById('description').value = post.description || '';
-    document.getElementById('content').value = post.body || '';
+    setEditorContent(post.body || '');
     document.getElementById('isDraft').checked = post.draft || false;
     if (post.categories && post.categories.length > 0) {
       const sel = document.getElementById('category');
@@ -1140,7 +1652,7 @@ async function savePost() {
     categories: [document.getElementById('category').value],
     tags,
     description: document.getElementById('description').value.trim(),
-    body: document.getElementById('content').value,
+    body: getEditorContent(),
   };
   try {
     const res = await fetch(API_BASE + '/api/posts', {
@@ -1273,13 +1785,14 @@ function renderImageGrid() {
 }
 
 function insertImagePath(imgPath) {
-  const textarea = document.getElementById('content');
   const shortcode = '{{< img src="' + imgPath + '" alt="" caption="" >}}';
-  const pos = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
-  textarea.value = textarea.value.substring(0, pos) + '\n' + shortcode + '\n' + textarea.value.substring(pos);
-  textarea.focus();
-  textarea.selectionStart = textarea.selectionEnd = pos + shortcode.length + 2;
-  savedCursorPos = null;
+  if (editorMode === 'visual') {
+    const imgSrc = imgPath.startsWith('/images/') ? API_BASE + imgPath : imgPath;
+    const html = '<br><span class="editor-img-wrapper" contenteditable="false" data-shortcode=\'' + shortcode.replace(/'/g, '&#39;') + '\'><img src="' + imgSrc + '" alt="" style="max-width:800px;width:100%;"></span><br>';
+    insertHtmlAtCursor(html);
+  } else {
+    insertTextAtCursor('\n' + shortcode + '\n');
+  }
   showToast('📷 写真を本文に挿入しました', 'success');
 }
 
@@ -1333,12 +1846,21 @@ function removeTag(index) { tags.splice(index, 1); renderTags(); }
 
 // === ショートコード ===
 function insertShortcode(type) {
+  const richEditor = document.getElementById('richEditor');
   const textarea = document.getElementById('content');
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const selectedText = textarea.value.substring(start, end);
-  savedCursorPos = start; // ダイアログ表示前にカーソル位置を保存
-  let insert = '';
+
+  // ビジュアルモード：選択テキスト取得
+  let selectedText = '';
+  if (editorMode === 'visual') {
+    saveEditorSelection();
+    const sel = window.getSelection();
+    if (sel.rangeCount > 0) selectedText = sel.toString();
+  } else {
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    selectedText = textarea.value.substring(start, end);
+  }
+
   const slug = document.getElementById('slug').value || 'folder';
   switch(type) {
     case 'img':
@@ -1361,8 +1883,12 @@ function insertShortcode(type) {
         { id: 'ytTitle', label: 'タイトル（省略可）', placeholder: '例: コストコ購入品紹介' }
       ], function(vals) {
         if (!vals.ytId) { showToast('動画IDを入力してください', 'error'); return false; }
-        const code = '{{< youtube id="' + vals.ytId.trim() + '" title="' + (vals.ytTitle || '').trim() + '" >}}';
-        insertAtCursor(code);
+        const sc = '{{< youtube id="' + vals.ytId.trim() + '" title="' + (vals.ytTitle || '').trim() + '" >}}';
+        if (editorMode === 'visual') {
+          insertHtmlAtCursor('<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + sc.replace(/'/g, '&#39;') + '\'>🎥 YouTube: ' + (vals.ytTitle || vals.ytId).trim() + '</span><br>');
+        } else {
+          insertTextAtCursor(sc);
+        }
         return true;
       });
       return;
@@ -1373,37 +1899,61 @@ function insertShortcode(type) {
         { id: 'azDesc', label: 'おすすめポイント（省略可）', placeholder: '例: 料理が簡単にできる！' }
       ], function(vals) {
         if (!vals.azTitle || !vals.azAsin) { showToast('商品名とASINを入力してください', 'error'); return false; }
-        const code = '{{< amazon title="' + vals.azTitle.trim() + '" asin="' + vals.azAsin.trim() + '" description="' + (vals.azDesc || '').trim() + '" >}}';
-        insertAtCursor(code);
+        const sc = '{{< amazon title="' + vals.azTitle.trim() + '" asin="' + vals.azAsin.trim() + '" description="' + (vals.azDesc || '').trim() + '" >}}';
+        if (editorMode === 'visual') {
+          insertHtmlAtCursor('<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + sc.replace(/'/g, '&#39;') + '\'>🛒 Amazon: ' + vals.azTitle.trim() + '</span><br>');
+        } else {
+          insertTextAtCursor(sc);
+        }
         return true;
       });
       return;
     case 'heading':
-      showHeadingPicker();
+      showHeadingPicker(selectedText);
       return;
     case 'bold':
-      if (selectedText) {
-        insert = '**' + selectedText + '**';
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          document.execCommand('bold', false, null);
+        } else {
+          const boldText = prompt('太字にするテキストを入力してください：');
+          if (boldText) insertHtmlAtCursor('<b>' + boldText + '</b>');
+        }
       } else {
-        const boldText = prompt('太字にするテキストを入力してください：');
-        if (boldText) { insert = '**' + boldText + '**'; }
-        else return;
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          textarea.value = textarea.value.substring(0, s) + '**' + selectedText + '**' + textarea.value.substring(e);
+          textarea.selectionStart = s; textarea.selectionEnd = s + selectedText.length + 4;
+        } else {
+          const boldText = prompt('太字にするテキストを入力してください：');
+          if (boldText) insertTextAtCursor('**' + boldText + '**');
+        }
       }
-      break;
+      return;
     case 'italic':
-      if (selectedText) {
-        insert = '*' + selectedText + '*';
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          document.execCommand('italic', false, null);
+        } else {
+          const italicText = prompt('イタリックにするテキストを入力してください：');
+          if (italicText) insertHtmlAtCursor('<i>' + italicText + '</i>');
+        }
       } else {
-        const italicText = prompt('イタリックにするテキストを入力してください：');
-        if (italicText) { insert = '*' + italicText + '*'; }
-        else return;
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          textarea.value = textarea.value.substring(0, s) + '*' + selectedText + '*' + textarea.value.substring(e);
+          textarea.selectionStart = s; textarea.selectionEnd = s + selectedText.length + 2;
+        } else {
+          const italicText = prompt('イタリックにするテキストを入力してください：');
+          if (italicText) insertTextAtCursor('*' + italicText + '*');
+        }
       }
-      break;
+      return;
     case 'fontSize':
-      showFontSizePicker();
+      showFontSizePicker(selectedText);
       return;
     case 'color':
-      showColorPicker();
+      showColorPicker(selectedText);
       return;
     case 'link':
       showInputDialog('🔗 リンクを挿入', [
@@ -1411,71 +1961,133 @@ function insertShortcode(type) {
         { id: 'linkUrl', label: 'URL', placeholder: 'https://example.com', required: true }
       ], function(vals) {
         if (!vals.linkText || !vals.linkUrl) { showToast('テキストとURLを入力してください', 'error'); return false; }
-        const code = '[' + vals.linkText.trim() + '](' + vals.linkUrl.trim() + ')';
-        insertAtCursor(code);
+        if (editorMode === 'visual') {
+          insertHtmlAtCursor('<a href="' + vals.linkUrl.trim() + '">' + vals.linkText.trim() + '</a>');
+        } else {
+          insertTextAtCursor('[' + vals.linkText.trim() + '](' + vals.linkUrl.trim() + ')');
+        }
         return true;
       });
       return;
     case 'alignLeft':
-      if (selectedText) {
-        insert = '<div style="text-align:left">\n\n' + selectedText + '\n\n</div>';
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          insertHtmlAtCursor('<div style="text-align:left">' + selectedText + '</div>');
+        } else {
+          document.execCommand('justifyLeft', false, null);
+        }
       } else {
-        insert = '<div style="text-align:left">\n\n';
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = '<div style="text-align:left">\n\n' + selectedText + '\n\n</div>';
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          insertTextAtCursor('<div style="text-align:left">\n\n');
+        }
       }
-      break;
+      return;
     case 'alignCenter':
-      if (selectedText) {
-        insert = '<div style="text-align:center">\n\n' + selectedText + '\n\n</div>';
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          insertHtmlAtCursor('<div style="text-align:center">' + selectedText + '</div>');
+        } else {
+          document.execCommand('justifyCenter', false, null);
+        }
       } else {
-        insert = '<div style="text-align:center">\n\n';
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = '<div style="text-align:center">\n\n' + selectedText + '\n\n</div>';
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          insertTextAtCursor('<div style="text-align:center">\n\n');
+        }
       }
-      break;
+      return;
     case 'alignRight':
-      if (selectedText) {
-        insert = '<div style="text-align:right">\n\n' + selectedText + '\n\n</div>';
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          insertHtmlAtCursor('<div style="text-align:right">' + selectedText + '</div>');
+        } else {
+          document.execCommand('justifyRight', false, null);
+        }
       } else {
-        insert = '<div style="text-align:right">\n\n';
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = '<div style="text-align:right">\n\n' + selectedText + '\n\n</div>';
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          insertTextAtCursor('<div style="text-align:right">\n\n');
+        }
       }
-      break;
+      return;
     case 'list':
-      if (selectedText) {
-        insert = selectedText.split('\n').map(line => '- ' + line).join('\n');
+      if (editorMode === 'visual') {
+        document.execCommand('insertUnorderedList', false, null);
       } else {
-        insert = '\n- ';
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = selectedText.split('\n').map(line => '- ' + line).join('\n');
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          insertTextAtCursor('\n- ');
+        }
       }
-      break;
+      return;
     case 'numlist':
-      if (selectedText) {
-        insert = selectedText.split('\n').map((line, i) => (i + 1) + '. ' + line).join('\n');
+      if (editorMode === 'visual') {
+        document.execCommand('insertOrderedList', false, null);
       } else {
-        insert = '\n1. ';
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = selectedText.split('\n').map((line, i) => (i + 1) + '. ' + line).join('\n');
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          insertTextAtCursor('\n1. ');
+        }
       }
-      break;
+      return;
     case 'blockquote':
-      if (selectedText) {
-        insert = selectedText.split('\n').map(line => '> ' + line).join('\n');
+      if (editorMode === 'visual') {
+        if (selectedText) {
+          insertHtmlAtCursor('<blockquote>' + selectedText + '</blockquote>');
+        } else {
+          const quoteText = prompt('引用テキストを入力してください：');
+          if (quoteText) insertHtmlAtCursor('<blockquote>' + quoteText + '</blockquote><br>');
+        }
       } else {
-        const quoteText = prompt('引用テキストを入力してください：');
-        if (quoteText) { insert = '\n> ' + quoteText + '\n'; }
-        else return;
+        if (selectedText) {
+          const s = textarea.selectionStart, e = textarea.selectionEnd;
+          const insert = selectedText.split('\n').map(line => '> ' + line).join('\n');
+          textarea.value = textarea.value.substring(0, s) + insert + textarea.value.substring(e);
+        } else {
+          const quoteText = prompt('引用テキストを入力してください：');
+          if (quoteText) insertTextAtCursor('\n> ' + quoteText + '\n');
+        }
       }
-      break;
+      return;
     case 'hr':
-      insert = '\n\n---\n\n';
-      break;
+      if (editorMode === 'visual') {
+        insertHtmlAtCursor('<hr><br>');
+      } else {
+        insertTextAtCursor('\n\n---\n\n');
+      }
+      return;
   }
-  textarea.value = textarea.value.substring(0, start) + insert + textarea.value.substring(end);
-  textarea.focus();
-  textarea.selectionStart = textarea.selectionEnd = start + insert.length;
 }
 
+// insertAtCursor - 互換性のため残す
 function insertAtCursor(text) {
-  const textarea = document.getElementById('content');
-  const start = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
-  textarea.value = textarea.value.substring(0, start) + text + textarea.value.substring(start);
-  textarea.focus();
-  textarea.selectionStart = textarea.selectionEnd = start + text.length;
-  savedCursorPos = null;
+  if (editorMode === 'visual') {
+    // Markdownテキストの場合、HTMLに変換して挿入
+    // shortcodeを判別
+    if (text.match(/\{\{<.*>\}\}/)) {
+      insertHtmlAtCursor(markdownToHtml(text));
+    } else {
+      insertHtmlAtCursor(markdownToHtml(text));
+    }
+  } else {
+    insertTextAtCursor(text);
+  }
 }
 
 // === 入力ダイアログ ===
@@ -1571,18 +2183,19 @@ function showImagePicker(isGallery) {
   if (isGallery) {
     document.getElementById('pickerInsert').onclick = function() {
       if (selected.size === 0) { showToast('写真を選択してください', 'error'); return; }
-      const textarea = document.getElementById('content');
-      const pos = (savedCursorPos !== null) ? savedCursorPos : textarea.selectionStart;
-      let code = '\n{{< gallery >}}\n';
+      let mdCode = '\n{{< gallery >}}\n';
       selected.forEach(i => {
         const img = uploadedImages[i];
-        code += '{{< img src="' + img.path + '" alt="" >}}\n';
+        mdCode += '{{< img src="' + img.path + '" alt="" >}}\n';
       });
-      code += '{{< /gallery >}}\n';
-      textarea.value = textarea.value.substring(0, pos) + code + textarea.value.substring(pos);
-      textarea.focus();
-      textarea.selectionStart = textarea.selectionEnd = pos + code.length;
-      savedCursorPos = null;
+      mdCode += '{{< /gallery >}}\n';
+
+      if (editorMode === 'visual') {
+        const sc = mdCode.trim();
+        insertHtmlAtCursor('<span class="editor-shortcode" contenteditable="false" data-shortcode=\'' + sc.replace(/'/g, '&#39;') + '\'>🖼️ ギャラリー（' + selected.size + '枚）</span><br>');
+      } else {
+        insertTextAtCursor(mdCode);
+      }
       modal.remove();
       showToast('🖼️ ギャラリーを挿入しました（' + selected.size + '枚）', 'success');
     };
@@ -1590,12 +2203,8 @@ function showImagePicker(isGallery) {
 }
 
 // === 見出しレベルピッカー ===
-function showHeadingPicker() {
-  const textarea = document.getElementById('content');
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const selectedText = textarea.value.substring(start, end);
-  savedCursorPos = start;
+function showHeadingPicker(selectedText) {
+  saveEditorSelection();
 
   let modal = document.getElementById('headingPickerModal');
   if (modal) modal.remove();
@@ -1649,8 +2258,12 @@ function showHeadingPicker() {
 function doInsertHeading(level) {
   const text = document.getElementById('headingText').value.trim();
   if (!text) { showToast('見出しのテキストを入力してください', 'error'); return; }
-  const prefix = '#'.repeat(level) + ' ';
-  insertAtCursor('\n' + prefix + text + '\n');
+  if (editorMode === 'visual') {
+    insertHtmlAtCursor('<h' + level + '>' + text + '</h' + level + '><br>');
+  } else {
+    const prefix = '#'.repeat(level) + ' ';
+    insertTextAtCursor('\n' + prefix + text + '\n');
+  }
   document.getElementById('headingPickerModal').remove();
 }
 
@@ -1664,8 +2277,12 @@ const EMOJI_DATA = {
 };
 
 function showEmojiPicker() {
-  const textarea = document.getElementById('content');
-  savedCursorPos = textarea.selectionStart;
+  if (editorMode === 'visual') {
+    saveEditorSelection();
+  } else {
+    const textarea = document.getElementById('content');
+    savedSelection = textarea.selectionStart;
+  }
   let overlay = document.getElementById('emojiOverlay');
   if (overlay) overlay.remove();
   overlay = document.createElement('div');
@@ -1715,19 +2332,32 @@ function switchEmojiCategory(btn, cat) {
 }
 
 function insertEmoji(emoji) {
-  const textarea = document.getElementById('content');
-  const pos = textarea.selectionStart;
-  textarea.value = textarea.value.substring(0, pos) + emoji + textarea.value.substring(textarea.selectionEnd);
-  textarea.focus();
-  textarea.selectionStart = textarea.selectionEnd = pos + emoji.length;
+  if (editorMode === 'visual') {
+    const richEditor = document.getElementById('richEditor');
+    richEditor.focus();
+    if (savedSelection && typeof savedSelection === 'object') {
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(savedSelection);
+    }
+    document.execCommand('insertText', false, emoji);
+  } else {
+    const textarea = document.getElementById('content');
+    const pos = (typeof savedSelection === 'number') ? savedSelection : textarea.selectionStart;
+    textarea.value = textarea.value.substring(0, pos) + emoji + textarea.value.substring(textarea.selectionEnd);
+    textarea.focus();
+    textarea.selectionStart = textarea.selectionEnd = pos + emoji.length;
+  }
   const overlay = document.getElementById('emojiOverlay');
   if (overlay) overlay.remove();
+  savedSelection = null;
 }
 
 // === 画像編集（alt/キャプション/サイズ/位置） ===
 function editImageProps(index) {
-  const textarea = document.getElementById('content');
-  savedCursorPos = textarea.selectionStart;
+  if (editorMode === 'visual') {
+    saveEditorSelection();
+  }
   const img = uploadedImages[index];
   let modal = document.getElementById('imgEditModal');
   if (modal) modal.remove();
@@ -1804,7 +2434,21 @@ function editImageProps(index) {
     const alt = (document.getElementById('imgEditAlt').value || '').trim();
     const caption = (document.getElementById('imgEditCaption').value || '').trim();
     const shortcode = '{{< img src="' + img.path + '" alt="' + alt + '" caption="' + caption + '" width="' + selectedWidth + '" align="' + selectedAlign + '" >}}';
-    insertAtCursor('\n' + shortcode + '\n');
+    if (editorMode === 'visual') {
+      const imgSrc = img.path.startsWith('/images/') ? API_BASE + img.path : img.path;
+      const w = selectedWidth === '100%' ? '100%' : selectedWidth + 'px';
+      let alignStyle = 'display:block;';
+      if (selectedAlign === 'center') alignStyle += 'margin:8px auto;';
+      else if (selectedAlign === 'right') alignStyle += 'margin:8px 0 8px auto;';
+      else alignStyle += 'margin:8px auto 8px 0;';
+      let html = '<span class="editor-img-wrapper" contenteditable="false" data-shortcode=\'' + shortcode.replace(/'/g, '&#39;') + '\' style="' + alignStyle + 'max-width:' + w + '">';
+      html += '<img src="' + imgSrc + '" alt="' + alt + '" style="max-width:' + w + ';width:100%;border-radius:8px;">';
+      if (caption) html += '<span class="editor-img-caption">' + caption + '</span>';
+      html += '</span>';
+      insertHtmlAtCursor('<br>' + html + '<br>');
+    } else {
+      insertTextAtCursor('\n' + shortcode + '\n');
+    }
     modal.remove();
     showToast('📷 写真を挿入しました', 'success');
   };
@@ -1813,12 +2457,8 @@ function editImageProps(index) {
 }
 
 // === 文字サイズピッカー ===
-function showFontSizePicker() {
-  const textarea = document.getElementById('content');
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const selectedText = textarea.value.substring(start, end);
-  savedCursorPos = start;
+function showFontSizePicker(selectedText) {
+  saveEditorSelection();
 
   let modal = document.getElementById('fontSizeModal');
   if (modal) modal.remove();
@@ -1862,18 +2502,18 @@ function showFontSizePicker() {
 function doInsertFontSize(size) {
   const text = document.getElementById('fontSizeText').value.trim();
   if (!text) { showToast('テキストを入力してください', 'error'); return; }
-  const code = '<span style="font-size:' + size + '">' + text + '</span>';
-  insertAtCursor(code);
+  if (editorMode === 'visual') {
+    insertHtmlAtCursor('<span style="font-size:' + size + '">' + text + '</span>');
+  } else {
+    const code = '<span style="font-size:' + size + '">' + text + '</span>';
+    insertTextAtCursor(code);
+  }
   document.getElementById('fontSizeModal').remove();
 }
 
 // === 文字色ピッカー ===
-function showColorPicker() {
-  const textarea = document.getElementById('content');
-  const start = textarea.selectionStart;
-  const end = textarea.selectionEnd;
-  const selectedText = textarea.value.substring(start, end);
-  savedCursorPos = start;
+function showColorPicker(selectedText) {
+  saveEditorSelection();
 
   let modal = document.getElementById('colorModal');
   if (modal) modal.remove();
@@ -1923,8 +2563,12 @@ function showColorPicker() {
 function doInsertColor(hex) {
   const text = document.getElementById('colorText').value.trim();
   if (!text) { showToast('テキストを入力してください', 'error'); return; }
-  const code = '<span style="color:' + hex + '">' + text + '</span>';
-  insertAtCursor(code);
+  if (editorMode === 'visual') {
+    insertHtmlAtCursor('<span style="color:' + hex + '">' + text + '</span>');
+  } else {
+    const code = '<span style="color:' + hex + '">' + text + '</span>';
+    insertTextAtCursor(code);
+  }
   document.getElementById('colorModal').remove();
 }
 
@@ -1935,6 +2579,7 @@ function clearForm() {
   document.getElementById('date').value = new Date().toISOString().split('T')[0];
   document.getElementById('description').value = '';
   document.getElementById('content').value = '';
+  document.getElementById('richEditor').innerHTML = '';
   document.getElementById('isDraft').checked = false;
   document.getElementById('category').selectedIndex = 5;
   tags = [];

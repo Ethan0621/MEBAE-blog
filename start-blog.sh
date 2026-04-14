@@ -25,13 +25,13 @@ sleep 1
 
 # --- APIサーバーを起動（バックグラウンド） ---
 echo "📡 管理サーバーを起動中..."
-node "$BLOG_DIR/admin-server.js" &
+arch -x86_64 node "$BLOG_DIR/admin-server.js" &
 API_PID=$!
 sleep 1
 
 # --- Hugoサーバーを起動（バックグラウンド） ---
 echo "🔨 プレビューサーバーを起動中..."
-hugo server -D --port 1313 &
+arch -x86_64 hugo server -D --port 1313 &
 HUGO_PID=$!
 sleep 2
 

@@ -220,6 +220,80 @@
     location.reload();
   };
 
+  // === フォローCTAボタン（いいねの上） ===
+  const followCtaBtn = document.getElementById('followCtaBtn');
+  const followCtaForm = document.getElementById('followCtaForm');
+  const followCtaThanks = document.getElementById('followCtaThanks');
+  const followCtaFormInner = document.getElementById('followCtaFormInner');
+
+  window.showFollowCta = function() {
+    if (localStorage.getItem('mebae_following') === 'true') {
+      showSocialToast('すでにフォロー中です 🌸');
+      return;
+    }
+    if (followCtaForm) {
+      followCtaForm.style.display = followCtaForm.style.display === 'none' ? 'block' : 'none';
+    }
+  };
+
+  if (followCtaBtn && localStorage.getItem('mebae_following') === 'true') {
+    followCtaBtn.classList.add('following');
+    followCtaBtn.innerHTML = '<span class="follow-cta-icon">❤️</span> フォロー中';
+    followCtaBtn.onclick = function() { showSocialToast('すでにフォロー中です 🌸'); };
+    if (followCtaThanks) followCtaThanks.style.display = 'block';
+  }
+
+  if (followCtaFormInner) {
+    followCtaFormInner.addEventListener('submit', function(e) {
+      e.preventDefault();
+      var email = document.getElementById('followCtaEmail').value.trim();
+      var name = document.getElementById('followCtaName') ? document.getElementById('followCtaName').value.trim() : '';
+      if (!email) { showSocialToast('メールアドレスを入力してください', true); return; }
+
+      var formData = new URLSearchParams();
+      formData.append('form-name', 'follow');
+      formData.append('email', email);
+      formData.append('name', name);
+
+      // Netlify Forms & local API
+      var submitPromise;
+      if (API_BASE) {
+        submitPromise = fetch(API_BASE + '/api/followers', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: email, name: name })
+        });
+      } else {
+        submitPromise = fetch('/', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+          body: formData.toString()
+        });
+      }
+
+      submitPromise.then(function(response) {
+        if (response.ok) {
+          showSocialToast('フォローありがとうございます！🌸');
+          localStorage.setItem('mebae_following', 'true');
+          localStorage.setItem('mebae_follow_email', email);
+          if (followCtaBtn) {
+            followCtaBtn.classList.add('following');
+            followCtaBtn.innerHTML = '<span class="follow-cta-icon">❤️</span> フォロー中';
+            followCtaBtn.onclick = function() { showSocialToast('すでにフォロー中です 🌸'); };
+          }
+          if (followCtaForm) followCtaForm.style.display = 'none';
+          if (followCtaThanks) followCtaThanks.style.display = 'block';
+          if (followerCountEl) {
+            var current = parseInt(followerCountEl.textContent) || 0;
+            followerCountEl.textContent = current + 1;
+          }
+        } else {
+          showSocialToast('送信に失敗しました。もう一度お試しください。', true);
+        }
+      }).catch(function() { showSocialToast('送信に失敗しました。', true); });
+    });
+  }
+
   // === ヘルパー ===
   function escapeHtml(str) {
     return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');

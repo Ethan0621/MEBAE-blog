@@ -26,7 +26,7 @@
   </figure>
   {{ end }}
 
-  {{/* AdSense（記事上部） */}}
+  {{/* AdSense（記事上部）- 広告スロットを設定後に有効化してください
   {{ if .Site.Params.monetization.enableAdsense }}
   <div class="ad-container ad-post-top">
     <ins class="adsbygoogle"
@@ -38,6 +38,7 @@
     <script>(adsbygoogle = window.adsbygoogle || []).push({});</script>
   </div>
   {{ end }}
+  */}}
 
   {{/* 目次 */}}
   {{ if .TableOfContents }}
@@ -74,6 +75,22 @@
     {{ end }}
   </div>
   {{ end }}
+
+  {{/* フォローボタン */}}
+  <div class="follow-cta-section">
+    <button class="follow-cta-btn" id="followCtaBtn" onclick="showFollowCta()">
+      <span class="follow-cta-icon">♡</span> フォローお願いします
+    </button>
+    <div class="follow-cta-form" id="followCtaForm" style="display:none;">
+      <form id="followCtaFormInner">
+        <input type="hidden" name="form-name" value="follow">
+        <input type="text" id="followCtaName" name="name" placeholder="お名前（任意）">
+        <input type="email" id="followCtaEmail" name="email" placeholder="メールアドレス" required>
+        <button type="submit">🌸 フォローする</button>
+      </form>
+    </div>
+    <p class="follow-cta-thanks" id="followCtaThanks" style="display:none;">🌸 フォロー中です！ありがとうございます♡</p>
+  </div>
 
   {{/* いいねボタン */}}
   <div class="like-section">

@@ -1,11 +1,13 @@
 {
   "pageViews": {
-    "/": 2,
+    "/": 4,
     "/posts/lunch-march-21-31-2026/": 1,
-    "/posts/koko/": 45
+    "/posts/koko/": 241,
+    "/categories/%e8%b2%b7%e3%81%a3%e3%81%a6%e8%89%af%e3%81%8b%e3%81%a3%e3%81%9f%e3%82%82%e3%81%ae/": 1
   },
   "dailyViews": {
-    "2026-04-12": 48
+    "2026-04-12": 74,
+    "2026-04-13": 173
   },
-  "totalViews": 48
+  "totalViews": 247
 }
